@@ -16,8 +16,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
-  TextEditingController loginController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  TextEditingController loginController = TextEditingController(text: "998900010615");
+  TextEditingController passwordController = TextEditingController(text: "11223344");
   List<Map<String, String>> textField = [
     {
       'icon': 'assets/icons/person.svg',

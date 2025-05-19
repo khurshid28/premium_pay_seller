@@ -2,13 +2,20 @@ import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/screens/single_application/single_screen.dart';
 import 'package:premium_pay_seller/service/storage.dart';
 
+
+
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
+
 class AppRouter {
   static bool isLogin() {
+    print("token >>");
+    print(StorageService().read(StorageService.token));
     return StorageService().read(StorageService.token) == null;
   }
 
   GoRouter router = GoRouter(
     initialLocation: isLogin() ? "/login" : "/",
+    navigatorKey: rootNavigatorKey,
     routes: [
       GoRoute(
         path: '/',
@@ -78,10 +85,18 @@ class AppRouter {
           GoRoute(
             path: 'step2',
             name: RouteConstants.step2,
-            pageBuilder: (context, state) => customPageRoute(
-              Step2Screen(title: state.uri.queryParameters['title']!),
-              state,
-            ),
+             pageBuilder: (context, state) {
+
+          final data = state.extra as Map?;
+          return customPageRoute(
+             Step2Screen(
+              app: data?['app'],
+              title: data?['title'] ,
+             ),
+            state,
+          );
+        },
+           
           ),
           GoRoute(
             path: 'step3',

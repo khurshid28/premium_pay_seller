@@ -5,7 +5,7 @@ import 'package:premium_pay_seller/export_files.dart';
 
 import '../../bloc/app/single/single_app_state.dart';
 import '../../widgets/common/custom_loading.dart';
-import '../home/components/single_card.dart';
+import 'components/single_card.dart';
 
 // ignore: must_be_immutable
 class SingleScreen extends StatefulWidget {
@@ -55,11 +55,25 @@ class _SingleScreenState extends State<SingleScreen> {
       'link': 'step6',
     },
   ];
+
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     AppContoller.getSingle(context, id: widget.id);
+    _timer = Timer.periodic(const Duration(seconds: 10), (Timer timer) {
+     if (mounted) {
+        AppContoller.refreshSingle(context, id: widget.id);
+     }
+    });
     super.initState();
+  }
+
+  Timer? _timer;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -90,7 +104,7 @@ class _SingleScreenState extends State<SingleScreen> {
               );
             }
 
-            return singleScreenBody();
+            return singleScreenBody(state.data);
           } else if (state is SingleAppWaitingState) {
             return const Center(
               child: CustomLoading(),
@@ -104,9 +118,7 @@ class _SingleScreenState extends State<SingleScreen> {
     );
   }
 
-  singleScreenBody<Widget>() {
-    return SingleCard(
-      cardList: singleCardList,
-    );
+  singleScreenBody<Widget>(dynamic data) {
+    return SingleCard(cardList: singleCardList, data: data);
   }
 }

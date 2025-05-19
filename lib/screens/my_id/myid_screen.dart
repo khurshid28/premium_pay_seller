@@ -1,3 +1,4 @@
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/service/my_id.dart';
 
@@ -11,7 +12,22 @@ class MyIdScreen extends StatefulWidget {
 
 class _MyIdScreenState extends State<MyIdScreen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
-  TextEditingController step1Controller = TextEditingController();
+  TextEditingController passportController = TextEditingController();
+
+  TextEditingController dateController = TextEditingController();
+
+  final passportMaskFormatter = MaskTextInputFormatter(
+    mask: 'AA#######',
+    filter: {"#": RegExp(r'[0-9]'), "A": RegExp(r'[A-Z]')},
+    type: MaskAutoCompletionType.lazy,
+  );
+
+  final dateMaskFormatter = MaskTextInputFormatter(
+    mask: '##/##/####', // Format: 01/04/2025
+    filter: {"#": RegExp(r'[0-9]')},
+    type: MaskAutoCompletionType.lazy,
+  );
+
   bool isChecked = false;
   List<Map<String, String>> step1TextField = [
     {
@@ -66,8 +82,23 @@ class _MyIdScreenState extends State<MyIdScreen> {
                   ),
                   SizedBox(height: 16.h),
                   CustomTextfield(
-                    textEditingController: step1Controller,
-                    keyboardType: TextInputType.phone,
+                textCapitalization: [TextCapitalization.characters,null][index],
+                    inputFormatters: [
+                      [
+                        FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9]')),
+                        passportMaskFormatter
+                      ],
+                      [dateMaskFormatter, ]
+                    ][index],
+                    onChanged: (v) => setState(() {}),
+                    textEditingController: [
+                      passportController,
+                      dateController
+                    ][index],
+                    keyboardType: [
+                      TextInputType.text,
+                       TextInputType.number,
+                    ][index],
                     prefixIcon: CustomIcon(
                       icon: step1TextField[index]['icon'].toString(),
                       color: AppConstant.primaryColor,
@@ -111,14 +142,25 @@ class _MyIdScreenState extends State<MyIdScreen> {
           SizedBox(height: 16.h),
           CustomButton(
             text: 'Поиск',
-            onTap: ()async {
-             MyIdResult? data = await  MyIdService().scan(passport: "AB6935244", birthdate: "31.07.2000");
-             if (data !=null) {
-               
-             }
+            color: passportController.text.length==9 && dateController.text.length==10 && isChecked ? AppConstant.primaryColor : AppConstant.greyColor1,
+            onTap: () async {
+             if (passportController.text.length==9 && dateController.text.length==10 && isChecked) {
+                MyIdResult? data = await MyIdService()
+                  .scan(passport: passportController.text, birthdate: dateController.text.replaceAll("/", "."));
+
+              for (var i = 0; i < 100; i++) {
+                print("++++++++++++++++++++++++++++++++++++++++++++");
+              }
+              print(data.toString());
+
+              if (data != null) {
+                print(data.comparison);
+                print(data.code);
+              }
               // context.pushReplacementNamed('singleApplication', extra: {
               //   'id': 5,
               // });
+             }
             },
           ),
         ],

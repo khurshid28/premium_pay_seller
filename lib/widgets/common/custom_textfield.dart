@@ -1,3 +1,4 @@
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:premium_pay_seller/export_files.dart';
 
 // ignore: must_be_immutable
@@ -11,6 +12,8 @@ class CustomTextfield extends StatelessWidget {
     this.maxlines,
     this.minlines,
     this.onChanged,
+    this.inputFormatters = const [],
+    this.textCapitalization
   });
   TextEditingController textEditingController;
   Widget? prefixIcon;
@@ -18,11 +21,14 @@ class CustomTextfield extends StatelessWidget {
   TextInputType? keyboardType;
   int? maxlines;
   int? minlines;
+  List<TextInputFormatter> inputFormatters =[];
+  TextCapitalization? textCapitalization;
   void Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      inputFormatters: inputFormatters,
       controller: textEditingController,
       keyboardType: keyboardType,
       minLines: minlines,

@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/all/all_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/all/all_state.dart';
+import 'package:premium_pay_seller/bloc/app/profile/app_profile_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/profile/app_profile_state.dart';
 import 'package:premium_pay_seller/bloc/app/single/single_app_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/single/single_app_state.dart';
 import 'package:premium_pay_seller/core/network/dio_exception.dart';
@@ -47,18 +49,18 @@ class AppContoller {
         print("Controller Error >>$e");
         print("Controller track >>$track");
       }
-      if (e is DioExceptions) {
-        var err = e;
+      // if (e is DioExceptions) {
+      //   var err = e;
 
-        // ignore: invalid_use_of_protected_member
-        BlocProvider.of<AllAppBloc>(context).emit(
-          AllAppErrorState(
-            message: err.message,
-            title: err.message,
-            statusCode: 500,
-          ),
-        );
-      }
+      //   // ignore: invalid_use_of_protected_member
+      //   BlocProvider.of<AllAppBloc>(context).emit(
+      //     AllAppErrorState(
+      //       message: err.message,
+      //       title: err.message,
+      //       statusCode: 500,
+      //     ),
+      //   );
+      // }
     }
   }
 
@@ -84,6 +86,68 @@ static Future<void> getSingle(BuildContext context,
         // ignore: invalid_use_of_protected_member
         BlocProvider.of<SingleAppBloc>(context).emit(
           SingleAppErrorState(
+            message: err.message,
+            title: err.message,
+            statusCode: 500,
+          ),
+        );
+      }
+    }
+  }
+
+
+static Future<void> refreshSingle(BuildContext context,
+{
+    required int id
+  }
+      ) async {
+    try {
+      await BlocProvider.of<SingleAppBloc>(context).refresh(
+        id: id
+      );
+    } catch (e, track) {
+      if (kDebugMode) {
+        print("Controller Error >>$e");
+        print("Controller track >>$track");
+      }
+      // if (e is DioExceptions) {
+      //   var err = e;
+
+      //   // ignore: invalid_use_of_protected_member
+      //   BlocProvider.of<SingleAppBloc>(context).emit(
+      //     SingleAppErrorState(
+      //       message: err.message,
+      //       title: err.message,
+      //       statusCode: 500,
+      //     ),
+      //   );
+      // }
+    }
+  }
+
+
+
+
+static Future<void> getProfile(BuildContext context,
+{
+    required int id
+  }
+      ) async {
+    try {
+      await BlocProvider.of<AppProfileBloc>(context).get(
+        id: id
+      );
+    } catch (e, track) {
+      if (kDebugMode) {
+        print("Controller Error >>$e");
+        print("Controller track >>$track");
+      }
+      if (e is DioExceptions) {
+        var err = e;
+
+        // ignore: invalid_use_of_protected_member
+        BlocProvider.of<AppProfileBloc>(context).emit(
+          AppProfileErrorState(
             message: err.message,
             title: err.message,
             statusCode: 500,

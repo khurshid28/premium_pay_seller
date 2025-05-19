@@ -2,8 +2,8 @@ import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/screens/single_application/components/single_card.dart';
 
 // ignore: must_be_immutable
-class CustomTile extends StatelessWidget {
-  CustomTile(
+class CustomTileSingle extends StatelessWidget {
+  CustomTileSingle(
       {super.key,
       required this.title,
       required this.subtitle,
@@ -13,6 +13,7 @@ class CustomTile extends StatelessWidget {
       required this.isTrailing,
       required this.onTap,
       required this.status,
+      required this.permission
       });
   String title;
   String subtitle;
@@ -22,16 +23,17 @@ class CustomTile extends StatelessWidget {
   bool isHomeCard;
   bool isTrailing;
   VoidCallback onTap;
-  
+  AppPermission permission ;
 
   @override
   Widget build(BuildContext context) {
+   
 
     return CustomContainer(
       height: isHomeCard ? 50.h : 70.h,
       width: 1.sw,
       child: ListTile(
-        onTap: onTap,
+        onTap: permission.allowed ?  onTap :(){},
         minTileHeight: isHomeCard ? 50.h : 70.h,
         horizontalTitleGap: 10.w,
         isThreeLine: false,
@@ -44,7 +46,7 @@ class CustomTile extends StatelessWidget {
             : CircleAvatar(
                 radius: 20.r,
                 backgroundColor:
-                    AppConstant.primaryColor.withOpacity( index ==0 ?  1 : 0.3),
+                    AppConstant.primaryColor.withOpacity(permission.allowed || permission.passed ? 1 : 0.3),
                 child: CustomIcon(
                   icon: leadingIcon,
                   color: AppConstant.whiteColor,
@@ -57,7 +59,7 @@ class CustomTile extends StatelessWidget {
           size: isHomeCard ? 14.sp : 16.sp,
           weight: FontWeight.w400,
         ),
-        subtitle: isTrailing
+        subtitle: isTrailing && permission.passed
             ? CustomText(
                 text: subtitle,
                 color: AppConstant.blackColor,
@@ -67,8 +69,8 @@ class CustomTile extends StatelessWidget {
             : null,
         trailing: isTrailing
             ? CustomIcon(
-                icon: 'assets/icons/${statusIcon(status)}.svg',
-                color: statusColor(status),
+                icon: 'assets/icons/${statusIcon()}.svg',
+                color: statusColor(),
                 width: isHomeCard ? 25 : 30,
               )
             : null,
@@ -76,33 +78,24 @@ class CustomTile extends StatelessWidget {
     );
   }
 
-  statusIcon<String>(String statusCode) {
-    print(statusCode);
-    if (statusCode == "FINISHED") {
+  statusIcon<String>() {
+    if ( permission.passed) {
       return 'checkmark';
-    } else if ([
-      "CANCELED_BY_SCORING",
-      "CANCELED_BY_CLIENT",
-      "CANCELED_BY_DAILY",
-    ].contains(statusCode)) {
-      return 'xmark';
-    } else {
+    }  else {
       return 'waitmark';
     }
   }
 
 
-  statusColor<Color>(String statusCode) {
-    if (statusCode == "FINISHED") {
+  statusColor<Color>() {
+
+     if ( permission.passed) {
       return AppConstant.greenColor;
-    } else if ([
-      "CANCELED_BY_SCORING",
-      "CANCELED_BY_CLIENT",
-      "CANCELED_BY_DAILY",
-    ].contains(statusCode)) {
-      return AppConstant.redColor;
-    } else {
+    }  else {
       return AppConstant.blueColor;
     }
+   
   }
+
+
 }

@@ -1,9 +1,15 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/profile/app_profile_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/profile/app_profile_state.dart';
+import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/widgets/common/custom_loading.dart';
 
 // ignore: must_be_immutable
 class Step2Screen extends StatefulWidget {
-  Step2Screen({super.key, required this.title});
-  String title;
+  final app;
+  String? title;
+  Step2Screen({super.key, required this.app,required this.title});
 
   @override
   State<Step2Screen> createState() => _Step2ScreenState();
@@ -12,6 +18,11 @@ class Step2Screen extends StatefulWidget {
 class _Step2ScreenState extends State<Step2Screen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController step2Controller = TextEditingController();
+  @override
+  void initState() { 
+    super.initState();
+    AppContoller.getProfile(context, id: int.tryParse(widget.app["id"].toString()) ?? 0);
+  }
   List<Map<String, dynamic>> step2CustomTileData = [
     {
       'title': 'Имя клиента',
@@ -39,14 +50,14 @@ class _Step2ScreenState extends State<Step2Screen> {
         'Адрес',
       ],
     },
-    {
-      'title': 'Данные ПК',
-      'icon': 'assets/icons/card.svg',
-      'textFieldtitle': [
-        'Номер ПК',
-        'Срок',
-      ],
-    },
+    // {
+    //   'title': 'Данные ПК',
+    //   'icon': 'assets/icons/card.svg',
+    //   'textFieldtitle': [
+    //     'Номер ПК',
+    //     'Срок',
+    //   ],
+    // },
   ];
   @override
   Widget build(BuildContext context) {
@@ -54,13 +65,31 @@ class _Step2ScreenState extends State<Step2Screen> {
       customAppBar: PreferredSize(
         preferredSize: Size.fromHeight(60.h),
         child: CustomAppBar(
-          titleText: widget.title,
+          titleText: widget.title ?? "",
           isLeading: true,
           isHome: false,
         ),
       ),
       scaffoldKey: scaffoldKey,
-      customBody: step2ScreenBody(),
+      customBody:
+      BlocBuilder <AppProfileBloc, AppProfileState>(
+        builder: (context, state) {
+          if (state is AppProfileSuccessState) {
+          
+
+            return    step2ScreenBody();
+          } else if (state is AppProfileWaitingState) {
+            return const Center(
+              child: CustomLoading(),
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
+      ),
+     
+      
+    
     );
   }
 
@@ -71,7 +100,7 @@ class _Step2ScreenState extends State<Step2Screen> {
         child: ConstrainedBox(
           constraints: BoxConstraints(
             minWidth: 1.sw,
-            minHeight: 1.sh - 87.h,
+            minHeight: 1.sh - 95.h,
           ),
           child: IntrinsicHeight(
             child: Column(
