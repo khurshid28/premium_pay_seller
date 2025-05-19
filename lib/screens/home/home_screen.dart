@@ -15,32 +15,28 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
+  Timer? _timer;
 
-  final List<String> homeCardList = [
-    "Алишер Баҳодиров",
-    "Абдулазиз Абдулмаликов",
-    "Ҳамза Исломов",
-    "Исмоил Жалолов",
-    "Лазиз Очилов",
-    "Нурали Тешаев",
-    "Одина Муродова",
-    "Жасур Алимов",
-    "Зафар Жабборов",
-    "Ҳалима Турсунова",
-    "Билол Алиев",
-    "Расул Исломов",
-    "Анвар Бердиев",
-    "Дилобар Расулова",
-    "Бахтиёр Жалолов",
-    "Зарина Алиева",
-    "Севара Солиева",
-    "Шаҳло Рустамова",
-    "Жўрабек Камолов",
-  ];
   @override
   void initState() {
     AppContoller.getAll(context);
+    _timer = Timer.periodic(const Duration(seconds: 10), (Timer timer) {
+     if (mounted) {
+        final location = GoRouterState.of(context).fullPath;
+        if (location =="/") {
+           AppContoller.refreshAll(context);
+        }
+       
+     }
+    });
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -54,9 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
           isHome: true,
         ),
       ),
-      customBody:
+      customBody: 
       
-       BlocBuilder<AllAppBloc, AllAppState>(
+      BlocBuilder<AllAppBloc, AllAppState>(
         builder: (context, state) {
           if (state is AllAppSuccessState) {
             if (state.data.isEmpty) {
@@ -74,8 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             return AllAppCard(
-              cardList:
-                  state.data,
+              cardList: state.data,
             );
           } else if (state is AllAppWaitingState) {
             return const Center(

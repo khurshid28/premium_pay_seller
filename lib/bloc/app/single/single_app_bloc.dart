@@ -30,6 +30,25 @@ class SingleAppBloc extends Cubit<SingleAppState> {
   }
 
  
+  Future refresh({
+    required int id
+  }) async {
+  
+    dio.Response response = await dioClient.get("${Endpoints.app}/$id");
+
+    if (response.statusCode == 200) {
+      emit(SingleAppSuccessState(data: response.data));
+    } else {
+      // emit(
+      //   SingleAppErrorState(
+      //       title: response.data["error"].toString(),
+      //       message: response.data["message"].toString(),
+      //       statusCode: response.statusCode),
+      // );
+    }
+
+    return response.data;
+  }
 
 
 }

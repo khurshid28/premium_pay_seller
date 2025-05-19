@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/all/all_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/profile/app_profile_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/single/single_app_bloc.dart';
 import 'package:premium_pay_seller/bloc/login/login_bloc.dart';
 import 'package:premium_pay_seller/export_files.dart';
@@ -16,14 +17,27 @@ class PremiumPaySeller extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) => MultiBlocProvider(
         providers: [
-          BlocProvider<LoginBloc>(create:(context)=>LoginBloc(),),
-           BlocProvider<AllAppBloc>(create:(context)=>AllAppBloc(),),
-            BlocProvider<SingleAppBloc>(create:(context)=>SingleAppBloc(),),
+          BlocProvider<LoginBloc>(
+            create: (context) => LoginBloc(),
+            lazy: true,
+          ),
+          BlocProvider<AllAppBloc>(
+            create: (context) => AllAppBloc(),
+              lazy: true,
+          ),
+          BlocProvider<SingleAppBloc>(
+            create: (context) => SingleAppBloc(),
+              lazy: true,
+          ),
+             BlocProvider<AppProfileBloc>(
+            create: (context) => AppProfileBloc(),
+              lazy: true,
+          ),
         ],
         child: MaterialApp.router(
           title: 'Premium Pay',
           debugShowCheckedModeBanner: false,
-             builder: MaterialAppCustomBuilder.builder,
+          builder: MaterialAppCustomBuilder.builder,
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(
               seedColor: AppConstant.primaryColor,

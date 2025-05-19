@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/export_files.dart';
 
 // ignore: must_be_immutable
@@ -44,11 +45,17 @@ class AllAppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Map> sorted = sortedData();
-    return SingleChildScrollView(
+    return RefreshIndicator(
+              color: AppConstant.primaryColor,
+              displacement: 40.h,
+              elevation: 0,
+              onRefresh: () => AppContoller.refreshAll(context),
+              backgroundColor: Colors.transparent,
       child: ListView.builder(
+         physics:const AlwaysScrollableScrollPhysics(),
         itemCount: sorted.length,
-        shrinkWrap: true,
         scrollDirection: Axis.vertical,
+        primary: true,
         itemBuilder: (context, index) => Padding(
           padding: EdgeInsets.only(
             left: 16.w,

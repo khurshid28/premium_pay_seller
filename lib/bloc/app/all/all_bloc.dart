@@ -27,16 +27,17 @@ class AllAppBloc extends Cubit<AllAppState> {
   }
 
     Future refreshAll() async {
+
     dio.Response response = await dioClient.get(Endpoints.allApp);
     if (response.statusCode == 200) {
       emit(AllAppSuccessState(data: response.data));
     } else {
-      emit(
-        AllAppErrorState(
-            title: response.data["error"].toString(),
-            message: response.data["message"].toString(),
-            statusCode: response.statusCode),
-      );
+      // emit(
+      //   AllAppErrorState(
+      //       title: response.data["error"].toString(),
+      //       message: response.data["message"].toString(),
+      //       statusCode: response.statusCode),
+      // );
     }
 
     return response.data;

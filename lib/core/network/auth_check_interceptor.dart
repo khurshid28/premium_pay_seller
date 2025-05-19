@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/service/storage.dart';
 
 class AuthCheckInterceptor extends Interceptor {
@@ -27,7 +28,7 @@ class AuthCheckInterceptor extends Interceptor {
      if (err.response?.statusCode == 401 || err.response?.statusCode == 500) {
       print("logout");
       StorageService().logout();
-      // rootNavigatorKey.currentContext?.replace(RouteConstants.login);
+      rootNavigatorKey.currentContext?.replace(RouteConstants.login);
     }
     print('❌ Error: ${err.message}');
     return handler.next(err);
