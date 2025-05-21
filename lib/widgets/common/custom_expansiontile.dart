@@ -6,15 +6,16 @@ class CustomExpansionTile extends StatelessWidget {
     super.key,
     required this.title,
     required this.leadingIcon,
-    required this.textFieldtitle,
+    required this.fields,
     required this.index,
-    required this.textEditingController,
+    this.onChanged
+ 
   });
   String title;
   String leadingIcon;
-  List<String> textFieldtitle;
+  List<Map<String, dynamic>> fields;
   int index;
-  TextEditingController textEditingController;
+  void Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -36,12 +37,34 @@ class CustomExpansionTile extends StatelessWidget {
         ),
         iconColor: AppConstant.primaryColor,
         children: List.generate(
-          textFieldtitle.length,
-          (index1) => Padding(
+          fields.length,
+          (i) => Padding(
             padding: EdgeInsets.only(bottom: 16.h),
             child: CustomTextfield(
-              textEditingController: textEditingController,
-              hintText: textFieldtitle[index1],
+              onChanged: onChanged,
+              keyboardType:fields[i]["keyboardType"],
+              readOnly: fields[i]["disable"] ?? false,
+              inputFormatters: fields[i]["masks"] ?? <TextInputFormatter>[] ,
+              textEditingController: fields[i]["controller"],
+              hintText: fields[i]["title"],
+              prefixIcon: fields[i]["prefix"] == null
+                  ? null
+                  : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding:  EdgeInsets.only( left: 10.w),
+                        child: Text(
+                            fields[i]["prefix"].toString(),
+                            style: TextStyle(
+                              color: AppConstant.blackColor,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                      ),
+                    ],
+                  ),
             ),
           ),
         ),

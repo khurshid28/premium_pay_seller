@@ -16,9 +16,9 @@ class DioClient {
     _dio
       ..options.baseUrl = Endpoints.baseUrl
       ..options.connectTimeout =
-          Duration(milliseconds: Endpoints.connectionTimeout)
+          const Duration(milliseconds: Endpoints.connectionTimeout)
       ..options.receiveTimeout =
-          Duration(milliseconds: Endpoints.receiveTimeout)
+          const Duration(milliseconds: Endpoints.receiveTimeout)
       ..options.responseType = dio.ResponseType.json;
 
     _dio.interceptors.add(AuthCheckInterceptor());

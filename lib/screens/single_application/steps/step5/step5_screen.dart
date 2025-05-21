@@ -1,9 +1,17 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/select/app_select_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/select/app_select_state.dart';
+import 'package:premium_pay_seller/controller/app_contoller.dart';
+import 'package:premium_pay_seller/core/extensions/number_extensions.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/service/loading.dart';
+import 'package:premium_pay_seller/service/toast.dart';
 
 // ignore: must_be_immutable
 class Step5Screen extends StatefulWidget {
-  Step5Screen({super.key, required this.title});
-  String title;
+  Step5Screen({super.key, required this.app});
+  dynamic app;
 
   @override
   State<Step5Screen> createState() => _Step5ScreenState();
@@ -12,14 +20,54 @@ class Step5Screen extends StatefulWidget {
 class _Step5ScreenState extends State<Step5Screen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
   bool isSelected = true;
-  int? selectedIndex;
+  num? Amount;
+  List products = [];
+  int selectedIndex = 0;
+  List months = [];
+
+  LoadingService loadingService = LoadingService();
+  ToastService toastService = ToastService();
+  @override
+  void initState() {
+    super.initState();
+    months = ((widget.app["fillial"]["expired_months"] ?? []) as List)
+        .where(((item) => item["active"]))
+        .toList();
+    Amount = widget.app["amount"];
+    products = widget.app["products"] ?? [];
+  }
+
+  int GettotalCount() {
+    int res = 0;
+    for (var item in products) {
+      res += int.tryParse((item["count"] ?? 0).toString()) ?? 0;
+    }
+    return res;
+  }
+
+  int GetPaymentAmount() {
+    return (((widget.app["amount"] ?? 0) *
+            ((100 +
+                (num.tryParse(
+                        months[selectedIndex ?? 0]["percent"].toString()) ??
+                    0)))) ~/
+        100);
+  }
+
+  int GetPaymentAmountInMonth() {
+    int PaymentAmount = GetPaymentAmount();
+
+    return PaymentAmount ~/
+        (num.tryParse(months[selectedIndex]["month"].toString()) ?? 0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
       customAppBar: PreferredSize(
         preferredSize: Size.fromHeight(60.h),
         child: CustomAppBar(
-          titleText: widget.title,
+          titleText: 'Оформление',
           isLeading: true,
           isHome: false,
         ),
@@ -30,6 +78,10 @@ class _Step5ScreenState extends State<Step5Screen> {
   }
 
   step5ScreenBody() {
+    num limit = widget.app["limit"] ?? 0;
+    int totalCount = GettotalCount();
+    int PaymentAmount = GetPaymentAmount();
+    int PaymentAmountInMonth = GetPaymentAmountInMonth();
     return SingleChildScrollView(
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -68,7 +120,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                                   color: AppConstant.primaryColor,
                                   child: Center(
                                     child: CustomText(
-                                      text: '4',
+                                      text: totalCount.toString(),
                                       color: AppConstant.whiteColor,
                                       size: 14,
                                       weight: FontWeight.w600,
@@ -88,7 +140,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                                   weight: FontWeight.w600,
                                 ),
                                 CustomText(
-                                  text: '12 600 000 сум',
+                                  text: '${Amount.toMoney()} сум',
                                   color: AppConstant.blackColor,
                                   size: 14,
                                   weight: FontWeight.w600,
@@ -109,35 +161,44 @@ class _Step5ScreenState extends State<Step5Screen> {
                         ),
                         iconColor: AppConstant.primaryColor,
                         children: List.generate(
-                          4,
-                          (index1) => Column(
-                            children: [
-                              customDivider(),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 8.h),
-                                child: SizedBox(
-                                  height: 30.h,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      CustomText(
-                                        text: 'Артель ТВ',
-                                        color: AppConstant.blackColor,
-                                        size: 14,
-                                        weight: FontWeight.w400,
-                                      ),
-                                      CustomText(
-                                        text: '3 150 000 сум',
-                                        color: AppConstant.blackColor,
-                                        size: 14,
-                                        weight: FontWeight.w400,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                          products.length,
+                          (i) => Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: List.generate(
+                                products[i]["count"] ?? 0,
+                                (_i) => Column(
+                                      children: [
+                                        customDivider(),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 8.h),
+                                          child: SizedBox(
+                                            height: 30.h,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                CustomText(
+                                                  text: products[i]["name"]
+                                                      .toString(),
+                                                  color: AppConstant.blackColor,
+                                                  size: 14,
+                                                  weight: FontWeight.w400,
+                                                ),
+                                                CustomText(
+                                                  text:
+                                                      '${num.tryParse(products[i]["price"].toString()).toMoney()} сум',
+                                                  color: AppConstant.blackColor,
+                                                  size: 14,
+                                                  weight: FontWeight.w400,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )),
                           ),
                         ),
                       ),
@@ -148,7 +209,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: List.generate(
-                    4,
+                    months.length,
                     (index) => GestureDetector(
                       onTap: () {
                         selectedIndex = index;
@@ -167,7 +228,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             CustomText(
-                              text: '${(index + 1) * 3} ',
+                              text: '${months[index]["month"]} ',
                               color: selectedIndex == index
                                   ? AppConstant.whiteColor
                                   : AppConstant.blackColor,
@@ -220,7 +281,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                             weight: FontWeight.w400,
                           ),
                           CustomText(
-                            text: '1 350 000 сум',
+                            text: '${PaymentAmountInMonth.toMoney()} сум',
                             color: AppConstant.blackColor,
                             size: 14,
                             weight: FontWeight.w600,
@@ -238,7 +299,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                             weight: FontWeight.w400,
                           ),
                           CustomText(
-                            text: '14 350 000 сум',
+                            text: '${PaymentAmount.toMoney()} сум',
                             color: AppConstant.blackColor,
                             size: 14,
                             weight: FontWeight.w600,
@@ -257,11 +318,50 @@ class _Step5ScreenState extends State<Step5Screen> {
                   weight: FontWeight.w400,
                   textAlign: TextAlign.center,
                 ),
+                BlocListener<AppSelectBloc, AppSelectState>(
+                  child: const SizedBox(),
+                  listener: (context, state) async {
+                    if (state is AppSelectWaitingState) {
+                      loadingService.showLoading(context);
+                    } else if (state is AppSelectErrorState) {
+                      loadingService.closeLoading(context);
+                      toastService.error(
+                          message: state.message ?? "Xatolik Bor");
+                      print(state.message ?? "Xatolik Bor");
+                    } else if (state is AppSelectSuccessState) {
+                      loadingService.closeLoading(context);
+
+                      if (mounted) {
+                        AppContoller.refreshSingle(context,
+                            id: int.tryParse(widget.app["id"].toString()) ?? 0);
+                        context.replace(
+                          '/singleApplication/step6',
+                          extra: {
+                            'app': state.data,
+                          },
+                        );
+                      }
+                      toastService.success(message: "Muvafaqqiyatli qo'shildi");
+
+                      print("Successfully Post data");
+                    }
+                  },
+                ),
                 const Spacer(),
                 SizedBox(height: 16.h),
                 CustomButton(
                   text: 'Оформить',
-                  onTap: () {},
+                  onTap: () {
+                    if (limit < PaymentAmount) {
+                      toastService.error(
+                          message: "Ваш лимит ${limit.toMoney()} сум");
+                    } else {
+                      AppContoller.select(context,
+                          id: int.tryParse(widget.app["id"].toString()) ?? 0,
+                          expired_month:
+                              months[selectedIndex]["month"].toString());
+                    }
+                  },
                 ),
                 SizedBox(height: 16.h),
                 CustomButton(

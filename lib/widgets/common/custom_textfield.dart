@@ -13,7 +13,8 @@ class CustomTextfield extends StatelessWidget {
     this.minlines,
     this.onChanged,
     this.inputFormatters = const [],
-    this.textCapitalization
+    this.textCapitalization,
+    this.readOnly = false
   });
   TextEditingController textEditingController;
   Widget? prefixIcon;
@@ -24,6 +25,7 @@ class CustomTextfield extends StatelessWidget {
   List<TextInputFormatter> inputFormatters =[];
   TextCapitalization? textCapitalization;
   void Function(String)? onChanged;
+  bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,7 @@ class CustomTextfield extends StatelessWidget {
       maxLines: maxlines,
       cursorColor: AppConstant.primaryColor,
       showCursor: false,
+      readOnly: readOnly,
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
         enabledBorder: OutlineInputBorder(

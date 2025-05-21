@@ -1,14 +1,17 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/service/storage.dart';
 
 class AuthCheckInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print('➡️ Request: ${options.method} ${options.uri}');
+    if (kDebugMode) {
+      print('➡️ Request: ${options.method} ${options.uri}');
+    }
     String? token = StorageService().read(StorageService.token);
 
-    // Masalan, token qo‘shish
+  
     if (token != null) {
       options.headers['Authorization'] = "Bearer $token";
     }
@@ -18,19 +21,25 @@ class AuthCheckInterceptor extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print('✅ Response: ${response.statusCode} ${response.data}');
+    if (kDebugMode) {
+      print('✅ Response: ${response.statusCode} ${response.data}');
+    }
    
     return handler.next(response);
   }
 
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
-     if (err.response?.statusCode == 401 || err.response?.statusCode == 500) {
-      print("logout");
+     if (err.response?.statusCode == 401 ) {
+      if (kDebugMode) {
+        print("logout");
+      }
       StorageService().logout();
       rootNavigatorKey.currentContext?.replace(RouteConstants.login);
     }
-    print('❌ Error: ${err.message}');
+    if (kDebugMode) {
+      print('❌ Error: ${err.message}');
+    }
     return handler.next(err);
   }
 }

@@ -1,12 +1,20 @@
 import 'dart:math';
 
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:premium_pay_seller/bloc/app/single/single_app_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/single/single_app_state.dart';
+import 'package:premium_pay_seller/controller/app_contoller.dart';
+import 'package:premium_pay_seller/core/extensions/number_extensions.dart';
 import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/screens/application/components/graphic_area.dart';
 import 'package:premium_pay_seller/screens/application/components/qrcode_area.dart';
 import 'package:premium_pay_seller/screens/application/components/table_area.dart';
+import 'package:premium_pay_seller/widgets/common/custom_loading.dart';
 
 class ApplicationScreen extends StatefulWidget {
-  const ApplicationScreen({super.key});
+  int? id;
+  ApplicationScreen({super.key, required this.id});
 
   @override
   State<ApplicationScreen> createState() => _ApplicationScreenState();
@@ -14,67 +22,25 @@ class ApplicationScreen extends StatefulWidget {
 
 class _ApplicationScreenState extends State<ApplicationScreen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
-  bool isSuccsess = true;
-  List<Map<String, String>> commonAreaList = [
-    {
-      'title': 'Имя',
-      'data': 'Алишер',
-    },
-    {
-      'title': 'Фамилия',
-      'data': 'Баҳодиров',
-    },
-    {
-      'title': 'Номер телефона',
-      'data': '+998901234567',
-    },
-    {
-      'title': 'Дата',
-      'data': '24/12/2024',
-    },
-  ];
-  List<Map<String, dynamic>> productList = [
-    {
-      'product': 'Iphone 16 Pro Max',
-      'price': 16000000,
-      'quantity': 1,
-    },
-    {
-      'product': 'Artel TV',
-      'price': 6000000,
-      'quantity': 2,
-    },
-    {
-      'product': 'LG Muzlatgich',
-      'price': 8000000,
-      'quantity': 1,
-    },
-    {
-      'product': 'Samsung A50',
-      'price': 5000000,
-      'quantity': 1,
-    },
-  ];
-  List<Map<String, dynamic>> graphicAreaList = [
-    {
-      'title': 'Срок оплаты',
-      'subtitle': '12 месяцев',
-      'icon': 'assets/icons/clock.svg',
-      'onTap': false,
-    },
-    {
-      'title': 'Сумма рассрочки',
-      'subtitle': '38 000 000 сум',
-      'icon': 'assets/icons/money.svg',
-      'onTap': false,
-    },
-    {
-      'title': 'График платежей',
-      'subtitle': '2 583 333 сум в месяц',
-      'icon': 'assets/icons/calendar.svg',
-      'onTap': true,
-    },
-  ];
+  // List<Map<String, String>> commonAreaList = [
+  //   {
+  //     'title': 'Имя',
+  //     'data': 'Алишер',
+  //   },
+  //   {
+  //     'title': 'Фамилия',
+  //     'data': 'Баҳодиров',
+  //   },
+  //   {
+  //     'title': 'Номер телефона',
+  //     'data': '+998901234567',
+  //   },
+  //   {
+  //     'title': 'Дата',
+  //     'data': '24/12/2024',
+  //   },
+  // ];
+
   List<Map<String, String>> graphicScreenList = [
     {
       'title': '1-й месяц',
@@ -137,7 +103,11 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
       'trailing': '2 583 333 сум',
     },
   ];
-
+  @override
+  void initState() {
+    AppContoller.getSingle(context, id: widget.id ?? 0);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,22 +115,111 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
       customAppBar: PreferredSize(
         preferredSize: Size.fromHeight(60.h),
         child: CustomAppBar(
-          titleText: 'ID: ${Random().nextInt(99999 + 1000000)}',
+          titleText: 'ID: ${widget.id}',
           isLeading: true,
           isHome: false,
         ),
       ),
-      customBody: applicationScreenBody(),
+      customBody: BlocBuilder<SingleAppBloc, SingleAppState>(
+        builder: (context, state) {
+          if (state is SingleAppSuccessState) {
+            if (state.data.isEmpty) {
+              return Center(
+                child: Text(
+                  "Заявкa недоступн",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppConstant.blackColor,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              );
+            }
+
+            return applicationScreenBody(state.data);
+          } else if (state is SingleAppWaitingState) {
+            return const Center(
+              child: CustomLoading(),
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
+      ),
       scaffoldKey: scaffoldKey,
     );
   }
 
-  applicationScreenBody<Widget>() {
+  applicationScreenBody<Widget>(data) {
+    String fullname = data["fullname"].toString();
+    String formatted = DateFormat('dd/MM/yyyy')
+        .format(DateTime.parse(data["createdAt"].toString()));
+    List<Map<String, String>> commonAreaList;
+
+    if (data["status"] == "FINISHED") {
+      commonAreaList = [
+        {
+          'title': 'Имя',
+          'data': fullname.split(" ")[0].toString(),
+        },
+        {
+          'title': 'Фамилия',
+          'data': fullname.split(" ").length > 0
+              ? fullname.split(" ")[1].toString()
+              : "",
+        },
+        {
+          'title': 'Номер телефона',
+          'data': data["phone"].toString(),
+        },
+        {
+          'title': 'Дата',
+          'data': formatted,
+        },
+      ];
+    } else {
+      commonAreaList = [
+        {
+          'title': 'Имя',
+          'data': fullname.split(" ")[0].toString(),
+        },
+        {
+          'title': 'Фамилия',
+          'data': fullname.split(" ").length > 1
+              ? fullname.split(" ")[1].toString()
+              : "",
+        },
+        {
+          'title': 'Номер телефона',
+          'data': data["phone"].toString(),
+        },
+        {
+          'title': 'Дата',
+          'data': formatted,
+        },
+        {
+          'title': 'Причина',
+          'data': data["canceled_reason"] ?? "",
+        },
+      ];
+    }
+
+    List<Map<String, dynamic>> productList = ((data["products"] ?? []) as List)
+        .map((item) => {
+              'product': item["name"] ?? "",
+              'price': num.tryParse(item["price"].toString()),
+              'quantity': int.tryParse(item["count"].toString()) ?? 1,
+            })
+        .toList();
+
     return SingleChildScrollView(
       child: Column(
         children: [
           commonArea(commonAreaList),
-          isSuccsess ? successArea(productList) : const SizedBox(),
+          data["status"] == "FINISHED"
+              ? successArea(productList, data)
+              : const SizedBox(),
         ],
       ),
     );
@@ -212,7 +271,29 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     );
   }
 
-  successArea(List productList) {
+  successArea(List productList, data) {
+    List<Map<String, dynamic>> graphicAreaList = [
+      {
+        'title': 'Срок оплаты',
+        'subtitle': '${data["expired_month"]} месяцев',
+        'icon': 'assets/icons/clock.svg',
+        'onTap': false,
+      },
+      {
+        'title': 'Сумма рассрочки',
+        'subtitle':
+            '${num.tryParse(data["payment_amount"].toString()).toMoney()} сум',
+        'icon': 'assets/icons/money.svg',
+        'onTap': false,
+      },
+      // {
+      //   'title': 'График платежей',
+      //   'subtitle': '2 583 333 сум в месяц',
+      //   'icon': 'assets/icons/calendar.svg',
+      //   'onTap': true,
+      // },
+    ];
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -226,9 +307,9 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
             weight: FontWeight.w600,
           ),
           SizedBox(height: 16.h),
-          tableArea(productList),
+          tableArea(productList,num.tryParse(data["amount"].toString())),
           graphicArea(graphicAreaList, context, graphicScreenList),
-          qrcodeArea(context),
+          // qrcodeArea(context),
           SizedBox(height: 16.h),
         ],
       ),

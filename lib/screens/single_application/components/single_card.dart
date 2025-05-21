@@ -29,10 +29,10 @@ class SingleCard extends StatelessWidget {
         break;
 
       case "WAITING_SCORING":
-        if (link == "step1" || link == "step2" || link == "step3") {
+        if (link == "step1" || link == "step2" ) {
           return AppPermission(allowed: false, passed: true);
-        } else if (link == "step4") {
-          return AppPermission(allowed: true, passed: false);
+        } else if (link == "step3") {
+          return AppPermission(allowed: true, passed: true);
         }
         break;
 
@@ -65,7 +65,7 @@ class SingleCard extends StatelessWidget {
         }
         break;
 
-      case "WAITING_BANK_COMFIRM":
+      case "WAITING_BANK_CONFIRM":
         if (link == "step1" ||
             link == "step2" ||
             link == "step3" ||
@@ -90,7 +90,7 @@ class SingleCard extends StatelessWidget {
         break;
 
       case "FINISHED":
-        return AppPermission(allowed: true, passed: true);
+        return AppPermission(allowed: false, passed: true);
 
       default:
     }
@@ -99,9 +99,6 @@ class SingleCard extends StatelessWidget {
 
   String getSubtitle(AppPermission appPermission, String link) {
     if (appPermission.passed) {
-
-      
-  
          
       switch (link) {
         case "step1":
@@ -109,6 +106,10 @@ class SingleCard extends StatelessWidget {
         case "step2":
           return  "Номер телефона: ${data['phone']}";
         case "step3":
+
+        if( data["status"] =="WAITING_SCORING"){
+          return "Ожидающий";
+        }
         num? limit = num.tryParse(data['limit'].toString());
     
           return "Лимит: ${ limit.toMoney()} сум";

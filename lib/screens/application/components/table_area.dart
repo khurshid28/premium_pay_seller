@@ -1,7 +1,7 @@
 import 'package:premium_pay_seller/core/extensions/number_extensions.dart';
 import 'package:premium_pay_seller/export_files.dart';
 
-tableArea(List productList) {
+tableArea(List productList,num? amount) {
   return Column(
     children: [
       Table(
@@ -163,7 +163,7 @@ tableArea(List productList) {
                   padding: EdgeInsets.all(8.w),
                   child: Center(
                     child: CustomText(
-                      text: '31 000 000',
+                      text: amount.toMoney(),
                       color: AppConstant.whiteColor,
                       size: 12,
                       weight: FontWeight.w500,

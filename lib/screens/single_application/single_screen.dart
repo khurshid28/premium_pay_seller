@@ -61,9 +61,9 @@ class _SingleScreenState extends State<SingleScreen> {
   void initState() {
     AppContoller.getSingle(context, id: widget.id);
     _timer = Timer.periodic(const Duration(seconds: 10), (Timer timer) {
-     if (mounted) {
+      if (mounted) {
         AppContoller.refreshSingle(context, id: widget.id);
-     }
+      }
     });
     super.initState();
   }
@@ -87,32 +87,48 @@ class _SingleScreenState extends State<SingleScreen> {
           isHome: false,
         ),
       ),
-      customBody: BlocBuilder<SingleAppBloc, SingleAppState>(
-        builder: (context, state) {
-          if (state is SingleAppSuccessState) {
-            if (state.data.isEmpty) {
-              return Center(
-                child: Text(
-                  "Заявкa недоступн",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppConstant.blackColor,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              );
+      customBody: BlocListener<SingleAppBloc, SingleAppState>(
+        listener: (context, stateListen) {
+          if (stateListen is SingleAppSuccessState) {
+          if ([
+              "FINISHED",
+              "CANCELED_BY_CLIENT",
+              "CANCELED_BY_SCORING",
+              "CANCELED_BY_DAILY"
+            ].contains(stateListen.data["status"])) {
+              context.replace('/application', extra: {
+                "id": int.tryParse(stateListen.data["id"].toString()) ?? 0
+              });
             }
-
-            return singleScreenBody(state.data);
-          } else if (state is SingleAppWaitingState) {
-            return const Center(
-              child: CustomLoading(),
-            );
-          } else {
-            return const SizedBox();
           }
         },
+        child: BlocBuilder<SingleAppBloc, SingleAppState>(
+          builder: (context, state) {
+            if (state is SingleAppSuccessState) {
+              if (state.data.isEmpty) {
+                return Center(
+                  child: Text(
+                    "Заявкa недоступн",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: AppConstant.blackColor,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                );
+              }
+
+              return singleScreenBody(state.data);
+            } else if (state is SingleAppWaitingState) {
+              return const Center(
+                child: CustomLoading(),
+              );
+            } else {
+              return const SizedBox();
+            }
+          },
+        ),
       ),
       scaffoldKey: scaffoldKey,
     );

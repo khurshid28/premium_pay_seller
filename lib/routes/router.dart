@@ -8,8 +8,6 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 class AppRouter {
   static bool isLogin() {
-    print("token >>");
-    print(StorageService().read(StorageService.token));
     return StorageService().read(StorageService.token) == null;
   }
 
@@ -44,10 +42,13 @@ class AppRouter {
       GoRoute(
         path: '/application',
         name: RouteConstants.application,
-        pageBuilder: (context, state) => customPageRoute(
-          const ApplicationScreen(),
-          state,
-        ),
+       pageBuilder: (context, state) {
+          final data = state.extra as Map?;
+          return customPageRoute(
+            ApplicationScreen(id: data?["id"] ?? 0),
+            state,
+          );
+        },
         routes: [
           GoRoute(
             path: 'graphic',
@@ -91,7 +92,6 @@ class AppRouter {
           return customPageRoute(
              Step2Screen(
               app: data?['app'],
-              title: data?['title'] ,
              ),
             state,
           );
@@ -101,34 +101,60 @@ class AppRouter {
           GoRoute(
             path: 'step3',
             name: RouteConstants.step3,
-            pageBuilder: (context, state) => customPageRoute(
-              Step3Screen(title: state.uri.queryParameters['title']!),
-              state,
-            ),
+              pageBuilder: (context, state) {
+
+          final data = state.extra as Map?;
+          return customPageRoute(
+             Step3Screen(
+              app: data?['app'],
+             ),
+            state,
+          );
+        },
           ),
           GoRoute(
             path: 'step4',
             name: RouteConstants.step4,
-            pageBuilder: (context, state) => customPageRoute(
-              Step4Screen(title: state.uri.queryParameters['title']!),
-              state,
-            ),
+            pageBuilder: (context, state) {
+
+          final data = state.extra as Map?;
+          return customPageRoute(
+             Step4Screen(
+              app: data?['app'],
+             ),
+            state,
+          );
+        },
           ),
           GoRoute(
             path: 'step5',
             name: RouteConstants.step5,
-            pageBuilder: (context, state) => customPageRoute(
-              Step5Screen(title: state.uri.queryParameters['title']!),
-              state,
-            ),
+            pageBuilder: (context, state) {
+
+          final data = state.extra as Map?;
+          return customPageRoute(
+             Step5Screen(
+              app: data?['app'],
+             ),
+            state,
+          );
+        },
           ),
           GoRoute(
             path: 'step6',
             name: RouteConstants.step6,
-            pageBuilder: (context, state) => customPageRoute(
-              Step6Screen(title: state.uri.queryParameters['title']!),
-              state,
-            ),
+
+              pageBuilder: (context, state) {
+
+          final data = state.extra as Map?;
+          return customPageRoute(
+             Step6Screen(
+              app: data?['app'],
+             ),
+            state,
+          );
+        },
+          
           ),
         ],
       ),

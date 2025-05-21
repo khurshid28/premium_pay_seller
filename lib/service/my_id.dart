@@ -1,26 +1,17 @@
 import 'package:premium_pay_seller/export_files.dart';
 
 class MyIdService {
-  Future<MyIdResult?> scan(
+  FutureOr<MyIdResult?> scan(
       {required String passport, required String birthdate}) async {
-    for (var i = 0; i < 100; i++) {
-      print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-    }
-    print(Environment.myIdClientId);
-    print(passport);
-    print(birthdate);
+   
+ 
 
 
 
 
 
-
-
-
-
-
-
-    var result = await MyIdClient.start(
+  try {
+      var result = await MyIdClient.start(
       config: MyIdConfig(
         clientId: Environment.myIdClientId,
         clientHash: Environment.myIdClientHash,
@@ -41,6 +32,9 @@ class MyIdService {
       // iosAppearance: const MyIdIOSAppearance(),
     );
 
-    return result;
+    return result; 
+  } catch (e) {
+    print(e); 
+  }
   }
 }

@@ -1,11 +1,18 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_state.dart';
+import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/core/extensions/number_extensions.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/service/formatters/thousand_formatter.dart';
+import 'package:premium_pay_seller/service/loading.dart';
+import 'package:premium_pay_seller/service/toast.dart';
 import 'package:premium_pay_seller/widgets/common/custom_modal.dart';
 
 // ignore: must_be_immutable
 class Step4Screen extends StatefulWidget {
-  Step4Screen({super.key, required this.title});
-  String title;
+  Step4Screen({super.key, required this.app});
+  final app;
 
   @override
   State<Step4Screen> createState() => _Step4ScreenState();
@@ -13,31 +20,76 @@ class Step4Screen extends StatefulWidget {
 
 class _Step4ScreenState extends State<Step4Screen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
-  bool isAdd = false;
 
-  List<Map<String, dynamic>> addProductData = [];
+  List<Map> addProductData = [];
   // Map<String, dynamic> defaultItem = ;
 
-  int totalPrice = 0;
-  int totalCount = 0;
   bool isSelected = true;
   int? selectedIndex;
+  List months = [];
 
+  int GettotalPrice() {
+    int res = 0;
+    for (var item in addProductData) {
+      res += int.parse(
+              item['price']['controller'].text.toString().replaceAll(" ", "")) *
+          int.parse(
+              item['count']['controller'].text.toString().replaceAll(" ", ""));
+    }
+    return res;
+  }
+
+  int GettotalCount() {
+    int res = 0;
+    for (var item in addProductData) {
+      res += int.parse(item['count']['controller'].text.toString());
+    }
+    return res;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    months = ((widget.app["fillial"]["expired_months"] ?? []) as List)
+        .where(((item) => item["active"]))
+        .toList();
+   addProductData = ((widget.app["products"] ?? [])as List).map((e)=>{
+     "name": {
+                  'title': 'Название продукта',
+                  'controller': TextEditingController(text: e["name"]),
+                },
+                "price": {
+                  'title': 'Цена продукта',
+                  'controller': TextEditingController(text: e["price"].toString()),
+                  'keyboardType': TextInputType.number,
+                  'masks': [ThousandsSeparatorInputFormatter()]
+                },
+                "count": {
+                  'title': 'Количество продукта',
+                  'keyboardType': TextInputType.number,
+                  'controller': TextEditingController(text: e["count"].toString()),
+                },
+   }).toList();
+    
+  }
+
+  LoadingService loadingService = LoadingService();
+  ToastService toastService = ToastService();
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
       customAppBar: PreferredSize(
         preferredSize: Size.fromHeight(60.h),
         child: CustomAppBar(
-          titleText: widget.title,
+          titleText: "Покупка",
           isLeading: true,
           isHome: false,
         ),
       ),
       scaffoldKey: scaffoldKey,
       customBody: step4ScreenBody(),
-      resizeToAvoidBottomInset: false,
-      floatingActionButtonPadding: isAdd ? 66.h : 0,
+      resizeToAvoidBottomInset: true,
+      floatingActionButtonPadding: addProductData.isNotEmpty ? 66.h : 0,
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
         onPressed: () async {
@@ -52,19 +104,19 @@ class _Step4ScreenState extends State<Step4Screen> {
                 "price": {
                   'title': 'Цена продукта',
                   'controller': TextEditingController(text: ""),
+                  'keyboardType': TextInputType.number,
+                  'masks': [ThousandsSeparatorInputFormatter()]
                 },
                 "count": {
                   'title': 'Количество продукта',
+                  'keyboardType': TextInputType.number,
                   'controller': TextEditingController(text: "1"),
                 },
               },
             ),
           );
           if (data != null) {
-            isAdd = true;
             addProductData.add(data);
-            totalPrice += int.parse(data['price']['controller'].text);
-            totalCount += int.parse(data['count']['controller'].text);
             setState(() {});
           }
         },
@@ -82,6 +134,16 @@ class _Step4ScreenState extends State<Step4Screen> {
   }
 
   addedProductArea() {
+    int totalPrice = GettotalPrice();
+    int totalCount = GettotalCount();
+    num PaymentAmount = ((totalPrice *
+            ((100 +
+                (num.tryParse(
+                        months[selectedIndex ?? 0]["percent"].toString()) ??
+                    0)))) ~/
+        100);
+    num limit = widget.app["limit"] ?? 0;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: SingleChildScrollView(
@@ -116,7 +178,7 @@ class _Step4ScreenState extends State<Step4Screen> {
                             color: AppConstant.primaryColor,
                             child: Center(
                               child: CustomText(
-                                text:totalCount.toString(),
+                                text: totalCount.toString(),
                                 color: AppConstant.whiteColor,
                                 size: 14,
                                 weight: FontWeight.w600,
@@ -162,7 +224,7 @@ class _Step4ScreenState extends State<Step4Screen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: List.generate(
-                          4,
+                          months.length,
                           (index) => GestureDetector(
                             onTap: () {
                               selectedIndex = index;
@@ -190,7 +252,7 @@ class _Step4ScreenState extends State<Step4Screen> {
                                     width: 30,
                                   ),
                                   CustomText(
-                                    text: '${(index + 1) * 3} ',
+                                    text: '${months[index]["month"]} ',
                                     color: selectedIndex == index
                                         ? AppConstant.whiteColor
                                         : AppConstant.blackColor,
@@ -211,13 +273,13 @@ class _Step4ScreenState extends State<Step4Screen> {
                         padding: EdgeInsets.symmetric(horizontal: 8.w),
                         child: selectedIndex == null
                             ? Center(
-                              child: CustomText(
+                                child: CustomText(
                                   text: 'Выберите период',
                                   color: AppConstant.whiteColor,
                                   size: 14,
                                   weight: FontWeight.w400,
                                 ),
-                            )
+                              )
                             : Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -230,7 +292,8 @@ class _Step4ScreenState extends State<Step4Screen> {
                                         width: 30,
                                       ),
                                       CustomText(
-                                        text: '${(selectedIndex! + 1) * 3} месяц',
+                                        text:
+                                            '${months[selectedIndex ?? 0]["month"]} месяц',
                                         color: AppConstant.whiteColor,
                                         size: 14,
                                         weight: FontWeight.w400,
@@ -238,7 +301,7 @@ class _Step4ScreenState extends State<Step4Screen> {
                                     ],
                                   ),
                                   CustomText(
-                                    text: (totalPrice * 1.41).toString(),
+                                    text: PaymentAmount.toMoney(),
                                     color: AppConstant.whiteColor,
                                     size: 14,
                                     weight: FontWeight.w400,
@@ -256,38 +319,143 @@ class _Step4ScreenState extends State<Step4Screen> {
                       bottom: 16.h,
                       top: index == 0 ? 16.h : 0,
                     ),
-                    child: CustomContainer(
-                      height: 50.h,
-                      width: 1.sw,
-                      padding: EdgeInsets.symmetric(horizontal: 16.w),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CustomText(
-                            text: addProductData[index]["name"]["controller"]
-                                .text,
-                            color: AppConstant.blackColor,
-                            size: 14,
-                            weight: FontWeight.w400,
+                    child: GestureDetector(
+                      onTap: () async {
+                        var data = await showCustomModal(
+                          context,
+                          AddProductArea(
+                            data: addProductData[index],
                           ),
-                          CustomText(
-                            text:
-                                '${int.tryParse((addProductData[index]["price"]["controller"].text).toString()).toMoney()} сум',
-                            color: AppConstant.blackColor,
-                            size: 14,
-                            weight: FontWeight.w400,
-                          ),
-                        ],
+                        );
+                        if (data != null) {
+                          addProductData[index] = data;
+                          // totalPrice += (int.parse(data['price']['controller'].text.toString().replaceAll(" ", "")) * int.parse(data['count']['controller'].text));
+                          // totalCount += int.parse(data['count']['controller'].text);
+                          setState(() {});
+                        }
+                      },
+                      child: CustomContainer(
+                        // height: 50.h,
+                        width: 1.sw,
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 16.w, vertical: 8.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 190.w,
+                                  child: CustomText(
+                                    text: addProductData[index]["name"]
+                                            ["controller"]
+                                        .text,
+                                    color: AppConstant.blackColor,
+                                    size: 14,
+                                    weight: FontWeight.w400,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 4.h,
+                                ),
+                                CustomContainer(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 8.w, vertical: 4.h),
+                                  color: AppConstant.primaryColor,
+                                  child: CustomText(
+                                    text: "x" +
+                                        addProductData[index]["count"]
+                                                ["controller"]
+                                            .text,
+                                    color: AppConstant.whiteColor,
+                                    size: 12,
+                                    weight: FontWeight.w900,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            CustomText(
+                              text:
+                                  '${int.tryParse((addProductData[index]["price"]["controller"].text).toString().replaceAll(" ", "")).toMoney()} сум',
+                              color: AppConstant.blackColor,
+                              size: 14,
+                              weight: FontWeight.w400,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
+                ),
+                BlocListener<AppAddProductBloc, AppAddProductState>(
+                  child: const SizedBox(),
+                  listener: (context, state) async {
+                    if (state is AppAddProductWaitingState) {
+                      loadingService.showLoading(context);
+                    } else if (state is AppAddProductErrorState) {
+                      loadingService.closeLoading(context);
+                      toastService.error(
+                          message: state.message ?? "Xatolik Bor");
+                      print(state.message ?? "Xatolik Bor");
+                    } else if (state is AppAddProductSuccessState) {
+                      loadingService.closeLoading(context);
+
+                      if (mounted) {
+                        AppContoller.refreshSingle(context,
+                            id: int.tryParse(widget.app["id"].toString()) ?? 0);
+                        context.replace(
+                          '/singleApplication/step5',
+                          extra: {
+                            'app':state.data,
+                          },
+                        );
+                      }
+                      toastService.success(message: "Muvafaqqiyatli qo'shildi");
+
+                      print("Successfully Post data");
+                    }
+                  },
                 ),
                 const Spacer(),
                 Padding(
                   padding: EdgeInsets.only(bottom: 16.h),
                   child: CustomButton(
                     text: 'Подтвердить информация',
-                    onTap: () {},
+                    color: selectedIndex != null && addProductData.isNotEmpty
+                        ? AppConstant.primaryColor
+                        : AppConstant.greyColor1,
+                    onTap: () {
+                      if (totalPrice < 500000) {
+                        toastService.error(message: "Минимум 500 000 сум");
+                      } else if (limit < PaymentAmount) {
+                        toastService.error(
+                            message: "Ваш лимит ${limit.toMoney()} сум");
+                      } else {
+                        if (selectedIndex != null &&
+                            addProductData.isNotEmpty) {
+                          AppContoller.addProduct(context,
+                              id: int.tryParse(widget.app["id"].toString()) ??
+                                  0,
+                              products: addProductData
+                                  .map((e) => {
+                                        "name": e["name"]["controller"]
+                                            .text
+                                            .toString(),
+                                        "price": int.tryParse(e["price"]
+                                                ["controller"]
+                                            .text
+                                            .toString()
+                                            .replaceAll(" ", "")),
+                                        "count": int.tryParse(e["count"]
+                                                ["controller"]
+                                            .text
+                                            .toString()),
+                                      })
+                                  .toList());
+                        }
+                      }
+                    },
                   ),
                 ),
               ],

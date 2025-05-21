@@ -1,4 +1,8 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/all/all_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/all/all_state.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/widgets/common/custom_loading.dart';
 
 showCustomSearch(BuildContext context) {
   showSearch(
@@ -8,27 +12,6 @@ showCustomSearch(BuildContext context) {
 }
 
 class CustomSearchDelegate extends SearchDelegate<String> {
-  final List<String> searchList = [
-    "Алишер Баҳодиров",
-    "Абдулазиз Абдулмаликов",
-    "Ҳамза Исломов",
-    "Исмоил Жалолов",
-    "Лазиз Очилов",
-    "Нурали Тешаев",
-    "Одина Муродова",
-    "Жасур Алимов",
-    "Зафар Жабборов",
-    "Ҳалима Турсунова",
-    "Билол Алиев",
-    "Расул Исломов",
-    "Анвар Бердиев",
-    "Дилобар Расулова",
-    "Бахтиёр Жалолов",
-    "Зарина Алиева",
-    "Севара Солиева",
-    "Шаҳло Рустамова",
-    "Жўрабек Камолов",
-  ];
 
   @override
   String get searchFieldLabel => 'Поиск';
@@ -48,7 +31,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
         surfaceTintColor: AppConstant.whiteColor,
       ),
       inputDecorationTheme: InputDecorationTheme(
-      
         border: InputBorder.none,
         hintStyle: TextStyle(
           color: AppConstant.blackColor,
@@ -56,7 +38,6 @@ class CustomSearchDelegate extends SearchDelegate<String> {
           fontWeight: FontWeight.w400,
         ),
       ),
-      
     );
   }
 
@@ -97,40 +78,93 @@ class CustomSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    final List<String> searchResults = searchList
-        .where((item) => item.toLowerCase().contains(query.toLowerCase()))
-        .toList();
     return Container(
       height: 1.sh,
       width: 1.sw,
       color: AppConstant.whiteColor,
-      child: AllAppCard(
-        cardList: searchResults,
-        // onTap: () {
-        //   // close(context, searchResults[index]);
-        // },
+      child: 
+      BlocBuilder<AllAppBloc, AllAppState>(
+        builder: (context, state) {
+          if (state is AllAppSuccessState) {
+            if (state.data.isEmpty) {
+              return Center(
+                child: Text(
+                  "Заявки недоступны",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppConstant.blackColor,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              );
+            }
+
+            return AllAppCard(
+              cardList: state.data
+                  .where((item) => item["fullname"]
+                      .toString()
+                      .toLowerCase()
+                      .contains(query.toLowerCase()))
+                  .toList(),
+            );
+          } else if (state is AllAppWaitingState) {
+            return const Center(
+              child: CustomLoading(),
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
       ),
     );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final List<String> suggestionList = query.isEmpty
-        ? []
-        : searchList
-            .where((item) => item.toLowerCase().contains(query.toLowerCase()))
-            .toList();
+    
 
     return Container(
       height: 1.sh,
       width: 1.sw,
       color: AppConstant.whiteColor,
-      child: AllAppCard(
-        cardList: suggestionList,
-        // onTap: () {
-        //   // query = suggestionList[index];
-        // },
+      child:    BlocBuilder<AllAppBloc, AllAppState>(
+        builder: (context, state) {
+          if (state is AllAppSuccessState) {
+            if (state.data.isEmpty) {
+              return Center(
+                child: Text(
+                  "Заявки недоступны",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppConstant.blackColor,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              );
+            }
+
+            return AllAppCard(
+              cardList:  query.isEmpty
+        ? []
+        : state.data
+                  .where((item) => item["fullname"]
+                      .toString()
+                      .toLowerCase()
+                      .contains(query.toLowerCase()))
+                  .toList(),
+            );
+          } else if (state is AllAppWaitingState) {
+            return const Center(
+              child: CustomLoading(),
+            );
+          } else {
+            return const SizedBox();
+          }
+        },
       ),
+  
     );
   }
 }

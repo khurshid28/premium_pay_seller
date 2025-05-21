@@ -9,6 +9,9 @@ class AllAppCard extends StatelessWidget {
   var format = DateFormat('dd.MM.yyyy');
 
   List<Map> sortedData() {
+    if (cardList.isEmpty) {
+      return [];
+    }
     List<Map> res = [
       {
         "date":
@@ -46,13 +49,13 @@ class AllAppCard extends StatelessWidget {
   Widget build(BuildContext context) {
     List<Map> sorted = sortedData();
     return RefreshIndicator(
-              color: AppConstant.primaryColor,
-              displacement: 40.h,
-              elevation: 0,
-              onRefresh: () => AppContoller.refreshAll(context),
-              backgroundColor: Colors.transparent,
+      color: AppConstant.primaryColor,
+      displacement: 40.h,
+      elevation: 0,
+      onRefresh: () => AppContoller.refreshAll(context),
+      backgroundColor: Colors.transparent,
       child: ListView.builder(
-         physics:const AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         itemCount: sorted.length,
         scrollDirection: Axis.vertical,
         primary: true,
@@ -110,8 +113,19 @@ class AllAppCard extends StatelessWidget {
                       isHomeCard: true,
                       isTrailing: true,
                       onTap: () {
-                        context.push('/singleApplication',
-                            extra: {"id": item["id"]});
+                        if ([
+                          "FINISHED",
+                          "CANCELED_BY_CLIENT",
+                          "CANCELED_BY_SCORING",
+                          "CANCELED_BY_DAILY"
+                        ].contains(item["status"])) {
+                          context.push('/application', extra: {
+                            "id": int.tryParse(item["id"].toString()) ?? 0
+                          });
+                        } else {
+                          context.push('/singleApplication',
+                              extra: {"id": item["id"]});
+                        }
                       },
                     ),
                     if (i != (sorted[index]["items"] ?? []).length - 1)

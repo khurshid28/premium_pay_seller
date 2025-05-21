@@ -1,11 +1,21 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/scoring/app_scoring_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/scoring/app_scoring_state.dart';
+import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/service/loading.dart';
+import 'package:premium_pay_seller/service/toast.dart';
 import 'package:premium_pay_seller/widgets/common/custom_loading.dart';
 
 // ignore: must_be_immutable
 class Step3Screen extends StatefulWidget {
-  Step3Screen({super.key, required this.title});
-  String title;
+  final app;
+  // String? title;
+  Step3Screen({
+    super.key,
+    required this.app,
+  });
 
   @override
   State<Step3Screen> createState() => _Step3ScreenState();
@@ -15,13 +25,23 @@ class _Step3ScreenState extends State<Step3Screen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
   bool isSelect = false;
   int selectedDay = 1;
+
+  LoadingService loadingService = LoadingService();
+  ToastService toastService = ToastService();
+
+  @override
+  void initState() {
+    isSelect = widget.app["status"] == "WAITING_SCORING";
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
       customAppBar: PreferredSize(
         preferredSize: Size.fromHeight(60.h),
         child: CustomAppBar(
-          titleText: widget.title,
+          titleText: "Скоринг",
           isLeading: true,
           isHome: false,
         ),
@@ -96,12 +116,39 @@ class _Step3ScreenState extends State<Step3Screen> {
             ],
           ),
         ),
+        BlocListener<AppScoringBloc, AppScoringState>(
+          child: const SizedBox(),
+          listener: (context, state) async {
+            if (state is AppScoringWaitingState) {
+              loadingService.showLoading(context);
+            } else if (state is AppScoringErrorState) {
+              loadingService.closeLoading(context);
+              toastService.error(message: state.message ?? "Xatolik Bor");
+              print(state.message ?? "Xatolik Bor");
+            } else if (state is AppScoringSuccessState) {
+              loadingService.closeLoading(context);
+
+              if (mounted) {
+                isSelect = !isSelect;
+                setState(() {});
+                AppContoller.refreshSingle(context,
+                    id: int.tryParse(widget.app["id"].toString()) ?? 0);
+                    await Future.delayed(const Duration(seconds: 8));
+                if (mounted) {
+                  context.pop();
+                }
+              }
+              toastService.success(message: "Muvafaqqiyatli yuborildi");
+
+              print("Successfully Post data");
+            }
+          },
+        ),
         SizedBox(height: 16.h),
         CustomButton(
           text: "Отправить на Скоринг",
           onTap: () {
-            isSelect = !isSelect;
-            setState(() {});
+            AppContoller.scoring(context, id: int.tryParse(widget.app["id"].toString()) ?? 0, dayOfPayment: selectedDay);
           },
         ),
         SizedBox(height: 16.h),

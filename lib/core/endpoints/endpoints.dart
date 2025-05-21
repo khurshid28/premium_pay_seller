@@ -18,5 +18,11 @@ class Endpoints {
   static String myIdClientHashId = dotenv.get('myIdClientHashId',fallback: "");
   static String myIdClientHash = dotenv.get('myIdClientHash',fallback: "");
 
+
+
+  static String myid = dotenv.get('myid',fallback: "");
+  static String version = dotenv.get('version',fallback: "");
+  
+  
   
 }
