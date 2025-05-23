@@ -41,69 +41,9 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
   //   },
   // ];
 
-  List<Map<String, String>> graphicScreenList = [
-    {
-      'title': '1-й месяц',
-      'subtitle': '01/01/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '2-й месяц',
-      'subtitle': '01/02/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '3-й месяц',
-      'subtitle': '01/03/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '4-й месяц',
-      'subtitle': '01/04/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '5-й месяц',
-      'subtitle': '01/05/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '6-й месяц',
-      'subtitle': '01/06/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '7-й месяц',
-      'subtitle': '01/07/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '8-й месяц',
-      'subtitle': '01/08/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '9-й месяц',
-      'subtitle': '01/09/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '10-й месяц',
-      'subtitle': '01/10/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '11-й месяц',
-      'subtitle': '01/11/2025',
-      'trailing': '2 583 333 сум',
-    },
-    {
-      'title': '12-й месяц',
-      'subtitle': '01/12/2025',
-      'trailing': '2 583 333 сум',
-    },
-  ];
-  @override
+ 
+
+ @override
   void initState() {
     AppContoller.getSingle(context, id: widget.id ?? 0);
     super.initState();
@@ -179,6 +119,15 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         },
       ];
     } else {
+      String whom = "";
+      if (data["status"]=="CANCELED_BY_CLIENT") {
+        whom ="Клиент";
+      }else   if (data["status"]=="CANCELED_BY_SCORING") {
+        whom ="Банк";
+      }else {
+        whom ="Система";
+      }
+
       commonAreaList = [
         {
           'title': 'Имя',
@@ -198,9 +147,14 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
           'title': 'Дата',
           'data': formatted,
         },
+
+         {
+          'title': 'Кем',
+          'data': whom,
+        },
         {
           'title': 'Причина',
-          'data': data["canceled_reason"] ?? "",
+          'data':whom =="Система" ? "Автоматический" : (data["canceled_reason"] ?? ""),
         },
       ];
     }
@@ -224,6 +178,8 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
       ),
     );
   }
+
+  
 
   commonArea(List commonAreaList) {
     return Padding(
@@ -271,7 +227,21 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
     );
   }
 
+
   successArea(List productList, data) {
+
+   
+
+  int GetPaymentAmountInMonth() {
+   
+
+    return (num.tryParse((data["payment_amount"] ?? 0).toString()) ?? 0) ~/
+    
+         (num.tryParse(
+                       data["expired_month"].toString()) ??
+                    12);
+  }
+  
     List<Map<String, dynamic>> graphicAreaList = [
       {
         'title': 'Срок оплаты',
@@ -286,12 +256,12 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
         'icon': 'assets/icons/money.svg',
         'onTap': false,
       },
-      // {
-      //   'title': 'График платежей',
-      //   'subtitle': '2 583 333 сум в месяц',
-      //   'icon': 'assets/icons/calendar.svg',
-      //   'onTap': true,
-      // },
+      {
+        'title': 'График платежей',
+        'subtitle': '${GetPaymentAmountInMonth().toMoney()} сум в месяц',
+        'icon': 'assets/icons/calendar.svg',
+        'onTap': true,
+      },
     ];
 
     return Padding(
@@ -308,7 +278,7 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
           ),
           SizedBox(height: 16.h),
           tableArea(productList,num.tryParse(data["amount"].toString())),
-          graphicArea(graphicAreaList, context, graphicScreenList),
+          graphicArea(graphicAreaList, data,context,),
           // qrcodeArea(context),
           SizedBox(height: 16.h),
         ],

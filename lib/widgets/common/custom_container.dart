@@ -10,10 +10,12 @@ class CustomContainer extends StatelessWidget {
     this.margin,
     this.color,
     this.bordercolor,
+     this.borderWidth,
     required this.child,
   });
   double? height;
   double? width;
+   double? borderWidth;
   Color? color;
   Color? bordercolor;
   Widget child;
@@ -32,7 +34,7 @@ class CustomContainer extends StatelessWidget {
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
           color: bordercolor ?? AppConstant.blackColor,
-          width: 0.1,
+          width:borderWidth?? 0.1,
         ),
       ),
       child: child,

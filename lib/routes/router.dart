@@ -57,7 +57,7 @@ class AppRouter {
               GraphicScreen(
                 title: state.uri.queryParameters['title']!,
                 subtitle: state.uri.queryParameters['subtitle']!,
-                graphicScreenList: (state.extra as Map?)?["graphicScreenList"],
+                app: (state.extra as Map?)?["app"],
               ),
               state,
             ),

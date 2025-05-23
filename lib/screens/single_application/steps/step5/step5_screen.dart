@@ -1,12 +1,16 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/cancel/app_cancel_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/cancel/app_cancel_state.dart';
 import 'package:premium_pay_seller/bloc/app/select/app_select_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/select/app_select_state.dart';
 import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/core/extensions/number_extensions.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/screens/single_application/steps/step5/components/cancel_area.dart';
 import 'package:premium_pay_seller/service/loading.dart';
 import 'package:premium_pay_seller/service/toast.dart';
+import 'package:premium_pay_seller/widgets/common/custom_modal.dart';
 
 // ignore: must_be_immutable
 class Step5Screen extends StatefulWidget {
@@ -347,6 +351,34 @@ class _Step5ScreenState extends State<Step5Screen> {
                     }
                   },
                 ),
+                BlocListener<AppCancelBloc, AppCancelState>(
+                  child: const SizedBox(),
+                  listener: (context, state) async {
+                    if (state is AppCancelWaitingState) {
+                      loadingService.showLoading(context);
+                    } else if (state is AppCancelErrorState) {
+                      loadingService.closeLoading(context);
+                      toastService.error(
+                          message: state.message ?? "Xatolik Bor");
+                      print(state.message ?? "Xatolik Bor");
+                    } else if (state is AppCancelSuccessState) {
+                      loadingService.closeLoading(context);
+                      if (mounted) {
+                        AppContoller.refreshSingle(context,
+                            id: int.tryParse(widget.app["id"].toString()) ?? 0);
+                        context.pushReplacement(
+                          '/application',
+                          extra: {
+                            "id": int.tryParse(state.data["id"].toString()) ?? 0
+                          },
+                        );
+                      }
+                      toastService.success(message: "Muvafaqqiyatli bekor qilindi");
+
+                      print("Successfully Post data");
+                    }
+                  },
+                ),
                 const Spacer(),
                 SizedBox(height: 16.h),
                 CustomButton(
@@ -367,7 +399,15 @@ class _Step5ScreenState extends State<Step5Screen> {
                 CustomButton(
                   color: AppConstant.redColor,
                   text: 'Отменить заявка',
-                  onTap: () {},
+                  onTap: () async {
+                    var data = await showCustomModal(
+                      context,
+                      CancelArea(),
+                    );
+                    if (data != null) {
+                       await AppContoller.cancel(context, id: int.tryParse(widget.app["id"].toString()) ?? 0, canceled_reason: data.toString());
+                    }
+                  },
                 ),
               ],
             ),

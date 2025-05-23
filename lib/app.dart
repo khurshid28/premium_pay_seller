@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/add_detail/app_add_detail_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/all/all_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/cancel/app_cancel_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/create/app_create_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/finish/app_finish_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/profile/app_profile_bloc.dart';
@@ -74,6 +75,10 @@ class PremiumPaySeller extends StatelessWidget {
 
            BlocProvider<VersionBloc>(
             create: (context) => VersionBloc(),
+            lazy: true,
+          ),
+           BlocProvider<AppCancelBloc>(
+            create: (context) => AppCancelBloc(),
             lazy: true,
           ),
         ],

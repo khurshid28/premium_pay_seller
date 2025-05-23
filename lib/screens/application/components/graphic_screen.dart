@@ -1,4 +1,7 @@
+import 'package:intl/intl.dart';
+import 'package:premium_pay_seller/core/extensions/number_extensions.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/service/generate_dates.dart';
 
 // ignore: must_be_immutable
 class GraphicScreen extends StatefulWidget {
@@ -6,11 +9,11 @@ class GraphicScreen extends StatefulWidget {
     super.key,
     required this.title,
     required this.subtitle,
-    required this.graphicScreenList,
+    required this.app
   });
   String? title;
   String? subtitle;
-  List? graphicScreenList;
+  dynamic app;
 
   @override
   State<GraphicScreen> createState() => _GraphicScreenState();
@@ -19,8 +22,26 @@ class GraphicScreen extends StatefulWidget {
 class _GraphicScreenState extends State<GraphicScreen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
 
+
+ int GetPaymentAmountInMonth() {
+   
+
+    return (num.tryParse((widget.app["payment_amount"] ?? 0).toString()) ?? 0) ~/
+    
+         (num.tryParse(
+                       widget.app["expired_month"].toString()) ??
+                    12);
+  }
+  
   @override
   Widget build(BuildContext context) {
+    for (var i = 0; i < 30; i++) {
+      print(widget.app?["request"]);
+    }
+    List<DateTime> dates = generateMonthlyDueDates(startDate: DateTime.parse(widget.app["createdAt"].toString()), dayOfMonth: int.tryParse((widget.app?["request"]?["redemptionday"] ?? "").toString()) ?? 1,months: int.tryParse(widget.app["expired_month"].toString()) ?? 12);
+
+   int amountInMonth = GetPaymentAmountInMonth();
+
     return CustomScaffold(
       customAppBar: PreferredSize(
         preferredSize: Size.fromHeight(60.h),
@@ -30,12 +51,12 @@ class _GraphicScreenState extends State<GraphicScreen> {
           isHome: false,
         ),
       ),
-      customBody: graphicScreenBody(),
+      customBody: graphicScreenBody(dates,amountInMonth),
       scaffoldKey: scaffoldKey,
     );
   }
 
-  graphicScreenBody<Widget>() {
+  graphicScreenBody<Widget>( List<DateTime> dates,int amountInMonth) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -85,7 +106,7 @@ class _GraphicScreenState extends State<GraphicScreen> {
               ),
             ),
             ...List.generate(
-              widget.graphicScreenList!.length,
+              dates.length,
               (index) => Padding(
                 padding: EdgeInsets.only(
                   bottom: 16.h,
@@ -103,13 +124,13 @@ class _GraphicScreenState extends State<GraphicScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomText(
-                            text: widget.graphicScreenList![index]['title'],
+                            text: "${index+1}-й месяц",
                             color: AppConstant.blackColor,
                             size: 12,
                             weight: FontWeight.w400,
                           ),
                           CustomText(
-                            text: widget.graphicScreenList![index]['subtitle'],
+                            text:DateFormat('dd/MM/yyyy').format(dates[index]),
                             color: AppConstant.blackColor,
                             size: 14,
                             weight: FontWeight.w400,
@@ -117,7 +138,7 @@ class _GraphicScreenState extends State<GraphicScreen> {
                         ],
                       ),
                       CustomText(
-                        text: widget.graphicScreenList![index]['trailing'],
+                         text: "${amountInMonth.toMoney()} сум",
                         color: AppConstant.blackColor,
                         size: 14,
                         weight: FontWeight.w400,

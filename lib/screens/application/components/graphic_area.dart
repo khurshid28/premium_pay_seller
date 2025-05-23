@@ -1,6 +1,6 @@
 import 'package:premium_pay_seller/export_files.dart';
 
-graphicArea(List graphicAreaList, BuildContext context, List graphicScreenList) {
+graphicArea(List graphicAreaList,dynamic app, BuildContext context) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.start,
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,7 +25,7 @@ graphicArea(List graphicAreaList, BuildContext context, List graphicScreenList) 
                       context.pushNamed(
                         'graphic',
                         extra: {
-                          'graphicScreenList': graphicScreenList,
+                          'app': app,
                         },
                         queryParameters: {
                           'title': graphicAreaList[index]['title'],

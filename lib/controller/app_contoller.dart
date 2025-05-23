@@ -8,6 +8,8 @@ import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_bloc.dar
 import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_state.dart';
 import 'package:premium_pay_seller/bloc/app/all/all_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/all/all_state.dart';
+import 'package:premium_pay_seller/bloc/app/cancel/app_cancel_bloc.dart';
+import 'package:premium_pay_seller/bloc/app/cancel/app_cancel_state.dart';
 import 'package:premium_pay_seller/bloc/app/create/app_create_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/create/app_create_state.dart';
 import 'package:premium_pay_seller/bloc/app/finish/app_finish_bloc.dart';
@@ -364,5 +366,38 @@ static Future<void> create(BuildContext context,
       }
     }
   }
+
+
+
+static Future<void> cancel(BuildContext context,
+{
+     required int id,
+    required String canceled_reason,
+  }
+      ) async {
+    try {
+      await BlocProvider.of<AppCancelBloc>(context).cancel(
+        id: id,
+        canceled_reason: canceled_reason
+      );
+    } catch (e, track) {
+      if (kDebugMode) {
+        print("Controller Error >>$e");
+        print("Controller track >>$track");
+      }
+      if (e is DioExceptions) {
+        var err = e;
+        // ignore: invalid_use_of_protected_member
+        BlocProvider.of<AppCancelBloc>(context).emit(
+          AppCancelErrorState(
+            message: err.message,
+            title: err.message,
+            statusCode: 500,
+          ),
+        );
+      }
+    }
+  }
+
 
 }

@@ -7,6 +7,7 @@ showCustomModal(BuildContext context, StatefulWidget builder,{bool isDismissible
     barrierColor: AppConstant.blackColor.withOpacity(0.3),
     backgroundColor: AppConstant.whiteColor,
     context: context,
+    showDragHandle: true,
     builder: (context) => builder,
   );
 }
