@@ -31,7 +31,7 @@ List<DateTime> getMonthlyDates(
 
   for (int i = 0; i < months; i++) {
     int year = startDate.year;
-    int month = startDate.month + i;
+    int month = startDate.month + i +1;
 
     year += (month - 1) ~/ 12;
     month = ((month - 1) % 12) + 1;
@@ -39,6 +39,7 @@ List<DateTime> getMonthlyDates(
     int lastDayOfMonth = DateTime(year, month + 1, 0).day;
 
     int day = targetDay <= lastDayOfMonth ? targetDay : lastDayOfMonth;
+    print(i.toString()+">> "+ DateTime(year, month, day).add(const Duration(hours: 5)).toString());
 
     dates.add(DateTime(year, month, day).add(const Duration(hours: 5)));
   }

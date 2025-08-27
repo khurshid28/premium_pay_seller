@@ -362,16 +362,19 @@ class _Step4ScreenState extends State<Step4Screen> {
                                 ),
                                 CustomContainer(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 8.w, vertical: 4.h),
+                                      horizontal: 9.w, vertical: 6.h),
+                                    
                                   color: AppConstant.primaryColor,
-                                  child: CustomText(
-                                    text: "x" +
-                                        addProductData[index]["count"]
-                                                ["controller"]
-                                            .text,
-                                    color: AppConstant.whiteColor,
-                                    size: 12,
-                                    weight: FontWeight.w900,
+                                  child: Center(
+                                    child: CustomText(
+                                      text: "x" +
+                                          addProductData[index]["count"]
+                                                  ["controller"]
+                                              .text,
+                                      color: AppConstant.whiteColor,
+                                      size: 12,
+                                      weight: FontWeight.w900,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -420,7 +423,7 @@ class _Step4ScreenState extends State<Step4Screen> {
                 ),
                 const Spacer(),
                 Padding(
-                  padding: EdgeInsets.only(bottom: 16.h),
+                  padding: EdgeInsets.only(bottom: 32.h),
                   child: CustomButton(
                     text: 'Подтвердить информация',
                     color: selectedIndex != null && addProductData.isNotEmpty

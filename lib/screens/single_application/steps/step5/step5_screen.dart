@@ -381,7 +381,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                   },
                 ),
                 const Spacer(),
-                SizedBox(height: 16.h),
+              
                 CustomButton(
                   text: 'Оформить',
                   onTap: () {
@@ -397,18 +397,21 @@ class _Step5ScreenState extends State<Step5Screen> {
                   },
                 ),
                 SizedBox(height: 16.h),
-                CustomButton(
-                  color: AppConstant.redColor,
-                  text: 'Отменить заявка',
-                  onTap: () async {
-                    var data = await showCustomModal(
-                      context,
-                      CancelArea(),
-                    );
-                    if (data != null) {
-                       await AppContoller.cancel(context, id: int.tryParse(widget.app["id"].toString()) ?? 0, canceled_reason: data.toString());
-                    }
-                  },
+                  Padding(
+        padding: EdgeInsets.only(bottom: 32.h),
+                  child: CustomButton(
+                    color: AppConstant.redColor,
+                    text: 'Отменить заявка',
+                    onTap: () async {
+                      var data = await showCustomModal(
+                        context,
+                        CancelArea(),
+                      );
+                      if (data != null) {
+                         await AppContoller.cancel(context, id: int.tryParse(widget.app["id"].toString()) ?? 0, canceled_reason: data.toString());
+                      }
+                    },
+                  ),
                 ),
               ],
             ),

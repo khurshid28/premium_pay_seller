@@ -193,15 +193,18 @@ class _Step3ScreenState extends State<Step3Screen> {
           },
         ),
         SizedBox(height: 16.h),
-        CustomButton(
-          text: "Отправить на Скоринг",
-          onTap: () {
-            AppContoller.scoring(context,
-                id: int.tryParse(widget.app["id"].toString()) ?? 0,
-                dayOfPayment: selectedDay);
-          },
+        Padding(
+        padding: EdgeInsets.only(bottom: 32.h),
+          child: CustomButton(
+            text: "Отправить на Скоринг",
+            onTap: () {
+              AppContoller.scoring(context,
+                  id: int.tryParse(widget.app["id"].toString()) ?? 0,
+                  dayOfPayment: selectedDay);
+            },
+          ),
         ),
-        SizedBox(height: 16.h),
+       
       ],
     );
   }

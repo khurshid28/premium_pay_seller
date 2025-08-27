@@ -68,14 +68,17 @@ class _MyIdScreenState extends State<MyIdScreen> {
           children: [
             SfPdfViewer.asset('assets/public-oferta.pdf'),
             Positioned(
-                bottom: 30.0.h,
+                bottom: 20.0.h,
                 left: 16.0,
                 right: 16.0,
-                child: CustomButton(
-                    text: "Согласен",
-                    onTap: () {
-                      Navigator.pop(context, "success");
-                    })
+                child: Padding(
+                  padding:  EdgeInsets.only(bottom: 20.h),
+                  child: CustomButton(
+                      text: "Согласен",
+                      onTap: () {
+                        Navigator.pop(context, "success");
+                      }),
+                )
 
                 // ElevatedButton(
                 //   style: ElevatedButton.styleFrom(
@@ -311,53 +314,56 @@ class _MyIdScreenState extends State<MyIdScreen> {
             ),
           ),
           SizedBox(height: 12.h),
-          CustomButton(
-            text: 'Поиск',
-            color: passportController.text.length == 9 &&
+          Padding(
+            padding: EdgeInsets.only(bottom: 32.h),
+            child: CustomButton(
+              text: 'Поиск',
+              color: passportController.text.length == 9 &&
+                      dateController.text.length == 10 &&
+                      isChecked &&
+                      selected == "Да"
+                  ? AppConstant.primaryColor
+                  : AppConstant.greyColor1,
+              onTap: () async {
+                if (passportController.text.length == 9 &&
                     dateController.text.length == 10 &&
                     isChecked &&
-                    selected == "Да"
-                ? AppConstant.primaryColor
-                : AppConstant.greyColor1,
-            onTap: () async {
-              if (passportController.text.length == 9 &&
-                  dateController.text.length == 10 &&
-                  isChecked &&
-                  selected == "Да") {
-                final data = await MyIdService().scan(
-                    passport: passportController.text,
-                    birthdate: dateController.text.replaceAll("/", "."));
-                if (data is MyIdResult?) {
-                  if (kDebugMode) {
-                    for (var i = 0; i < 100; i++) {
-                      print("++++++++++++++++++++++++++++++++++++++++++++");
+                    selected == "Да") {
+                  final data = await MyIdService().scan(
+                      passport: passportController.text,
+                      birthdate: dateController.text.replaceAll("/", "."));
+                  if (data is MyIdResult?) {
+                    if (kDebugMode) {
+                      for (var i = 0; i < 100; i++) {
+                        print("++++++++++++++++++++++++++++++++++++++++++++");
+                      }
                     }
+                    if (kDebugMode) print(data.toString());
+            
+                    if (data != null && data.code != null) {
+                      if (kDebugMode) print(data.comparison);
+                      if (kDebugMode) print(data.code);
+                      await MyidController.code(context,
+                          code: data.code,
+                          passport: passportController.text.replaceAll(" ", ""),
+                          comparison_value:
+                              double.tryParse(data.comparison.toString()) ?? 0);
+                    } else {
+                      toastService.error(message: "Tanib bo'lmadi");
+                    }
+                  } else if (data is Error) {
+                    toastService.error(
+                        message: data.stackTrace == null
+                            ? "Tanib bo'lmadi"
+                            : data.stackTrace.toString());
                   }
-                  if (kDebugMode) print(data.toString());
-
-                  if (data != null && data.code != null) {
-                    if (kDebugMode) print(data.comparison);
-                    if (kDebugMode) print(data.code);
-                    await MyidController.code(context,
-                        code: data.code,
-                        passport: passportController.text.replaceAll(" ", ""),
-                        comparison_value:
-                            double.tryParse(data.comparison.toString()) ?? 0);
-                  } else {
-                    toastService.error(message: "Tanib bo'lmadi");
-                  }
-                } else if (data is Error) {
+                } else if (selected == "Нет") {
                   toastService.error(
-                      message: data.stackTrace == null
-                          ? "Tanib bo'lmadi"
-                          : data.stackTrace.toString());
+                      message:
+                          "Обслуживание доступно только официально трудоустроенным клиентам");
                 }
-              } else if (selected == "Нет") {
-                toastService.error(
-                    message:
-                        "Обслуживание доступно только официально трудоустроенным клиентам");
-              }
-            },
+              },
+            ),
           ),
         ],
       ),

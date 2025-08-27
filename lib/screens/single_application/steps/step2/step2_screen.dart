@@ -33,6 +33,7 @@ class _Step2ScreenState extends State<Step2Screen> {
   );
 
   TextEditingController phoneController = TextEditingController();
+  TextEditingController rNameController = TextEditingController();
   TextEditingController phone2Controller = TextEditingController();
 
   @override
@@ -162,7 +163,15 @@ class _Step2ScreenState extends State<Step2Screen> {
             ]
           },
           {
-            "relation": true,
+            "title": 'Ф.И.О',
+             "relation": true,
+            "controller": rNameController,
+            "disable": false,
+            "keyboardType": TextInputType.name,
+            
+          },
+          {
+           
             "title": '90 123 45 67',
             "keyboardType": TextInputType.number,
             "controller": phone2Controller,
@@ -242,23 +251,26 @@ class _Step2ScreenState extends State<Step2Screen> {
                   },
                 ),
                 Padding(
-                  padding: EdgeInsets.only(bottom: 16.h),
+                  padding: EdgeInsets.only(bottom: 32.h),
                   child: CustomButton(
                     text: 'Подтвердить информация',
                     color: phoneController.text.length == 12 &&
-                            phone2Controller.text.length == 12 && selectedRelation !=null
+                            phone2Controller.text.length == 12 && selectedRelation !=null && rNameController.text.isNotEmpty
                         ? AppConstant.primaryColor
                         : AppConstant.greyColor1,
                     onTap: () {
                       if (phoneController.text.length == 12 &&
-                          phone2Controller.text.length == 12 && selectedRelation !=null) {
+                          phone2Controller.text.length == 12 && selectedRelation !=null  && rNameController.text.isNotEmpty) {
                         AppContoller.addDetail(context,
                             id: int.tryParse(widget.app["id"].toString()) ?? 0,
                             phone: "+998" +
                                 phoneController.text.replaceAll(" ", ""),
                             phone2: "+998" +
                                 phone2Controller.text.replaceAll(" ", ""),
-                                relation: selectedRelation);
+                                relation: selectedRelation,
+                                relationName : rNameController.text
+                                
+                                );
                       }
                     },
                   ),

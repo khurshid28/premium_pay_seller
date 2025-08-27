@@ -23,6 +23,7 @@ class NewApplicationCard extends StatelessWidget {
           top: index == 0 ? 16.w : 0,
           bottom: 16.w,
         ),
+        
         child: CustomTile(
           title: cardList[index]['title'],
           subtitle: cardList[index]['subtitle'],

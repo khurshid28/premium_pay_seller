@@ -26,11 +26,11 @@ import 'package:premium_pay_seller/core/network/dio_exception.dart';
 import 'package:premium_pay_seller/export_files.dart';
 
 class AppContoller {
-  static Future<void> getAll(BuildContext context,
-      ) async {
+  static Future<void> getAll(
+    BuildContext context,
+  ) async {
     try {
-      await BlocProvider.of<AllAppBloc>(context).getAllApp(
-      );
+      await BlocProvider.of<AllAppBloc>(context).getAllApp();
     } catch (e, track) {
       if (kDebugMode) {
         print("Controller Error >>$e");
@@ -51,13 +51,11 @@ class AppContoller {
     }
   }
 
-
-
- static Future<void> refreshAll(BuildContext context,
-      ) async {
+  static Future<void> refreshAll(
+    BuildContext context,
+  ) async {
     try {
-      await BlocProvider.of<AllAppBloc>(context).refreshAll(
-      );
+      await BlocProvider.of<AllAppBloc>(context).refreshAll();
     } catch (e, track) {
       if (kDebugMode) {
         print("Controller Error >>$e");
@@ -78,17 +76,9 @@ class AppContoller {
     }
   }
 
-
-
-static Future<void> getSingle(BuildContext context,
-{
-    required int id
-  }
-      ) async {
+  static Future<void> getSingle(BuildContext context, {required int id}) async {
     try {
-      await BlocProvider.of<SingleAppBloc>(context).get(
-        id: id
-      );
+      await BlocProvider.of<SingleAppBloc>(context).get(id: id);
     } catch (e, track) {
       if (kDebugMode) {
         print("Controller Error >>$e");
@@ -109,16 +99,10 @@ static Future<void> getSingle(BuildContext context,
     }
   }
 
-
-static Future<void> refreshSingle(BuildContext context,
-{
-    required int id
-  }
-      ) async {
+  static Future<void> refreshSingle(BuildContext context,
+      {required int id}) async {
     try {
-      await BlocProvider.of<SingleAppBloc>(context).refresh(
-        id: id
-      );
+      await BlocProvider.of<SingleAppBloc>(context).refresh(id: id);
     } catch (e, track) {
       if (kDebugMode) {
         print("Controller Error >>$e");
@@ -139,18 +123,10 @@ static Future<void> refreshSingle(BuildContext context,
     }
   }
 
-
-
-
-static Future<void> getProfile(BuildContext context,
-{
-    required int id
-  }
-      ) async {
+  static Future<void> getProfile(BuildContext context,
+      {required int id}) async {
     try {
-      await BlocProvider.of<AppProfileBloc>(context).get(
-        id: id
-      );
+      await BlocProvider.of<AppProfileBloc>(context).get(id: id);
     } catch (e, track) {
       if (kDebugMode) {
         print("Controller Error >>$e");
@@ -171,24 +147,21 @@ static Future<void> getProfile(BuildContext context,
     }
   }
 
-
-
-static Future<void> addDetail(BuildContext context,
-{
+  static Future<void> addDetail(
+    BuildContext context, {
     required int id,
     required String phone,
     required String phone2,
     required String? relation,
-  }
-      ) async {
+    required String? relationName,
+  }) async {
     try {
       await BlocProvider.of<AppAddDetailBloc>(context).add(
-        id: id,
-        phone2: phone2,
-        phone: phone,
-        relation : relation,
-
-      );
+          id: id,
+          phone2: phone2,
+          phone: phone,
+          relation: relation,
+          relationName: relationName);
     } catch (e, track) {
       if (kDebugMode) {
         print("Controller Error >>$e");
@@ -209,15 +182,11 @@ static Future<void> addDetail(BuildContext context,
     }
   }
 
-
-
-static Future<void> scoring(BuildContext context,
-{
+  static Future<void> scoring(
+    BuildContext context, {
     required int id,
     required int dayOfPayment,
-
-  }
-      ) async {
+  }) async {
     try {
       await BlocProvider.of<AppScoringBloc>(context).post(
         id: id,
@@ -243,18 +212,14 @@ static Future<void> scoring(BuildContext context,
     }
   }
 
-
-static Future<void> addProduct(BuildContext context,
-{
+  static Future<void> addProduct(
+    BuildContext context, {
     required int id,
-    required List<Map<String,dynamic>> products,
-  }
-      ) async {
+    required List<Map<String, dynamic>> products,
+  }) async {
     try {
-      await BlocProvider.of<AppAddProductBloc>(context).add(
-        id: id,
-       products: products
-      );
+      await BlocProvider.of<AppAddProductBloc>(context)
+          .add(id: id, products: products);
     } catch (e, track) {
       if (kDebugMode) {
         print("Controller Error >>$e");
@@ -275,19 +240,14 @@ static Future<void> addProduct(BuildContext context,
     }
   }
 
-
-
-static Future<void> select(BuildContext context,
-{
+  static Future<void> select(
+    BuildContext context, {
     required int id,
     required String expired_month,
-  }
-      ) async {
+  }) async {
     try {
-      await BlocProvider.of<AppSelectBloc>(context).select(
-        id: id,
-       expired_month: expired_month
-      );
+      await BlocProvider.of<AppSelectBloc>(context)
+          .select(id: id, expired_month: expired_month);
     } catch (e, track) {
       if (kDebugMode) {
         print("Controller Error >>$e");
@@ -308,13 +268,10 @@ static Future<void> select(BuildContext context,
     }
   }
 
-
-
-static Future<void> finish(BuildContext context,
-{
+  static Future<void> finish(
+    BuildContext context, {
     required int id,
-  }
-      ) async {
+  }) async {
     try {
       await BlocProvider.of<AppFinishBloc>(context).finish(
         id: id,
@@ -339,13 +296,10 @@ static Future<void> finish(BuildContext context,
     }
   }
 
-
-
-static Future<void> create(BuildContext context,
-{
+  static Future<void> create(
+    BuildContext context, {
     required String passport,
-  }
-      ) async {
+  }) async {
     try {
       await BlocProvider.of<AppCreateBloc>(context).create(
         passport: passport,
@@ -370,19 +324,14 @@ static Future<void> create(BuildContext context,
     }
   }
 
-
-
-static Future<void> cancel(BuildContext context,
-{
-     required int id,
+  static Future<void> cancel(
+    BuildContext context, {
+    required int id,
     required String canceled_reason,
-  }
-      ) async {
+  }) async {
     try {
-      await BlocProvider.of<AppCancelBloc>(context).cancel(
-        id: id,
-        canceled_reason: canceled_reason
-      );
+      await BlocProvider.of<AppCancelBloc>(context)
+          .cancel(id: id, canceled_reason: canceled_reason);
     } catch (e, track) {
       if (kDebugMode) {
         print("Controller Error >>$e");
@@ -401,6 +350,4 @@ static Future<void> cancel(BuildContext context,
       }
     }
   }
-
-
 }

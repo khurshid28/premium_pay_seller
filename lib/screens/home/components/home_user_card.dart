@@ -55,12 +55,12 @@ class AllAppCard extends StatelessWidget {
       elevation: 0,
       onRefresh: () => AppContoller.refreshAll(context),
       backgroundColor: Colors.transparent,
-      child: ListView.builder(
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: sorted.length,
-        scrollDirection: Axis.vertical,
-        primary: true,
-        itemBuilder: (context, index) => Padding(
+      child: SingleChildScrollView(
+          padding: EdgeInsets.zero,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ...List.generate(sorted.length,(index)=>  Padding(
           padding: EdgeInsets.only(
             left: 16.w,
             right: 16.w,
@@ -138,7 +138,11 @@ class AllAppCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
+    )
+          ],
+        ),
+      )
+        
     );
   }
 }
