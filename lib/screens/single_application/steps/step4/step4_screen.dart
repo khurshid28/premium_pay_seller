@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_state.dart';
@@ -397,7 +398,7 @@ class _Step4ScreenState extends State<Step4Screen> {
                       loadingService.closeLoading(context);
                       toastService.error(
                           message: state.message ?? "Xatolik Bor");
-                      print(state.message ?? "Xatolik Bor");
+                     if (kDebugMode)   print(state.message ?? "Xatolik Bor");
                     } else if (state is AppAddProductSuccessState) {
                       loadingService.closeLoading(context);
 
@@ -413,7 +414,7 @@ class _Step4ScreenState extends State<Step4Screen> {
                       }
                       toastService.success(message: "Muvafaqqiyatli qo'shildi");
 
-                      print("Successfully Post data");
+                    if (kDebugMode)    print("Successfully Post data");
                     }
                   },
                 ),

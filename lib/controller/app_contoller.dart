@@ -178,13 +178,16 @@ static Future<void> addDetail(BuildContext context,
     required int id,
     required String phone,
     required String phone2,
+    required String? relation,
   }
       ) async {
     try {
       await BlocProvider.of<AppAddDetailBloc>(context).add(
         id: id,
         phone2: phone2,
-        phone: phone
+        phone: phone,
+        relation : relation,
+
       );
     } catch (e, track) {
       if (kDebugMode) {

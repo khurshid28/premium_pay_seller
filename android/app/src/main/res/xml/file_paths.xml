@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Cache ichidagi fayllar -->
+    <cache-path name="cache" path="." />
+    <!-- App ichidagi files/ papkasi -->
+    <files-path name="files" path="." />
+    <!-- App ichidagi documents/ papkasi -->
+    <files-path name="docs" path="documents/" />
+</paths>

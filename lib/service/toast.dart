@@ -12,6 +12,7 @@ class ToastService {
       backgroundColor: AppConstant.primaryColor,
       textColor: Colors.white,
       fontSize: 14.sp,
+      
     );
   }
 

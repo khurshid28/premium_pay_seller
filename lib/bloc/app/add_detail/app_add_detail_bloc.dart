@@ -13,6 +13,7 @@ class AppAddDetailBloc extends Cubit<AppAddDetailState> {
     required int id,
     required String phone,
     required String phone2,
+     required String? relation,
   }) async {
     emit(AppAddDetailWaitingState());
     dio.Response response =
@@ -20,6 +21,7 @@ class AppAddDetailBloc extends Cubit<AppAddDetailState> {
       "id": id,
       "phone": phone,
       "phone2": phone2,
+      "relation"  : relation
     });
 
     if (response.statusCode == 200) {

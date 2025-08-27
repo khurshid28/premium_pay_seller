@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:premium_pay_seller/bloc/login/login_bloc.dart';
 import 'package:premium_pay_seller/bloc/login/login_state.dart';
@@ -16,8 +17,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
-  TextEditingController loginController = TextEditingController(text: "998900010615");
-  TextEditingController passwordController = TextEditingController(text: "11223344");
+  TextEditingController loginController = TextEditingController(text: "");
+  TextEditingController passwordController = TextEditingController(text: "");
   List<Map<String, String>> textField = [
     {
       'icon': 'assets/icons/person.svg',
@@ -69,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     passwordController
                   ][index],
                   keyboardType: TextInputType.number,
+                  maxlines: 1,
                   prefixIcon: CustomIcon(
                     icon: textField[index]['icon'].toString(),
                     color: AppConstant.primaryColor,
@@ -87,9 +89,11 @@ class _LoginScreenState extends State<LoginScreen> {
               } else if (state is LoginErrorState) {
                 loadingService.closeLoading(context);
                 toastService.error(message: state.message ?? "Xatolik Bor");
-                print(state.message ?? "Xatolik Bor");
+                if (kDebugMode) {
+                  print(state.message ?? "Xatolik Bor");
+                }
               } else if (state is LoginSuccessState) {
-                print(state.data);
+                if (kDebugMode) print(state.data);
                 loadingService.closeLoading(context);
                 await Future.wait([
                   StorageService().write(StorageService.token,

@@ -9,10 +9,12 @@ class CustomAppBar extends StatelessWidget {
     this.titleText,
     required this.isLeading,
     required this.isHome,
+    this.actions
   });
   String? titleText;
   bool isLeading;
   bool isHome;
+  List<Widget>? actions;
   @override
   Widget build(BuildContext context) {
     List<Map<String, dynamic>> actionIcons = [
@@ -128,10 +130,10 @@ class CustomAppBar extends StatelessWidget {
                   if (actionIcons[index]['link'] == 'search') {
                     showCustomSearch(context);
                   } else if (actionIcons[index]['link'] == 'filter') {
-                    showCustomModal(
-                      context,
-                      const FilterArea(),
-                    );
+                    // showCustomModal(
+                    //   context,
+                    //   const FilterArea(),
+                    // );
                   } else if (actionIcons[index]['link'] == 'support') {
                     context.push('/support');
                   } else {}
@@ -143,7 +145,7 @@ class CustomAppBar extends StatelessWidget {
                 ),
               ),
             )
-          : null,
+          : actions,
       bottom: PreferredSize(
         preferredSize: Size(1.sw, 0),
         child: customDivider(),

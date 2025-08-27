@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:premium_pay_seller/bloc/app/create/app_create_bloc.dart';
@@ -7,9 +8,11 @@ import 'package:premium_pay_seller/bloc/myID/myid_code_state.dart';
 import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/controller/myid_controller.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/service/formatters/uppercase_formatter.dart';
 import 'package:premium_pay_seller/service/loading.dart';
 import 'package:premium_pay_seller/service/my_id.dart';
 import 'package:premium_pay_seller/service/toast.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
 // ignore: must_be_immutable
 class MyIdScreen extends StatefulWidget {
@@ -42,7 +45,7 @@ class _MyIdScreenState extends State<MyIdScreen> {
     {
       'icon': 'assets/icons/passport.svg',
       'title': 'Серия и номер паспорта',
-      'hint': 'AB 1231212',
+      'hint': 'AB1231212',
     },
     {
       'icon': 'assets/icons/calendar.svg',
@@ -53,6 +56,45 @@ class _MyIdScreenState extends State<MyIdScreen> {
 
   LoadingService loadingService = LoadingService();
   ToastService toastService = ToastService();
+  Future showOferta() async {
+    return await showModalBottomSheet(
+      isDismissible: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      showDragHandle: true,
+      context: context,
+      builder: (builder) {
+        return Stack(
+          children: [
+            SfPdfViewer.asset('assets/public-oferta.pdf'),
+            Positioned(
+                bottom: 30.0.h,
+                left: 16.0,
+                right: 16.0,
+                child: CustomButton(
+                    text: "Согласен",
+                    onTap: () {
+                      Navigator.pop(context, "success");
+                    })
+
+                // ElevatedButton(
+                //   style: ElevatedButton.styleFrom(
+                //     fixedSize: Size(
+                //       MediaQuery.of(context).size.width,
+                //       40.0,
+                //     ),
+                //   ),
+                //   onPressed: () {
+
+                //   },
+                //   child: const Text('Qabul qildim'),
+                // ),
+                ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,19 +112,66 @@ class _MyIdScreenState extends State<MyIdScreen> {
     );
   }
 
+  String selected = ''; // Да yoki Нет
+
   myIdScreenBody() {
     return Padding(
       padding: EdgeInsets.all(16.w),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          CustomText(
+            text: "Вы имеете официальное место работы?",
+            color: AppConstant.blackColor,
+            size: 16,
+            weight: FontWeight.w400,
+          ),
+          Row(
+            children: [
+              Radio(
+                value: 'Да',
+                groupValue: selected,
+                activeColor: AppConstant.primaryColor,
+                onChanged: (value) {
+                  setState(() {
+                    selected = value!;
+                  });
+                },
+              ),
+              CustomText(
+                text: "Да",
+                color: AppConstant.blackColor,
+                size: 16,
+                weight: FontWeight.w400,
+              ),
+              Radio(
+                value: 'Нет',
+                groupValue: selected,
+                activeColor: AppConstant.primaryColor,
+                onChanged: (value) {
+                  setState(() {
+                    selected = value!;
+                  });
+                },
+              ),
+              CustomText(
+                text: "Нет",
+                color: AppConstant.blackColor,
+                size: 16,
+                weight: FontWeight.w400,
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 12.h,
+          ),
           ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             itemCount: step1TextField.length,
             itemBuilder: (context, index) => Padding(
-              padding: EdgeInsets.only(bottom: 16.h),
+              padding: EdgeInsets.only(bottom: 12.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +182,7 @@ class _MyIdScreenState extends State<MyIdScreen> {
                     size: 16,
                     weight: FontWeight.w400,
                   ),
-                  SizedBox(height: 16.h),
+                  SizedBox(height: 12.h),
                   CustomTextfield(
                     textCapitalization: [
                       TextCapitalization.characters,
@@ -101,7 +190,9 @@ class _MyIdScreenState extends State<MyIdScreen> {
                     ][index],
                     inputFormatters: [
                       [
-                        FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9]')),
+                        UpperCaseTextFormatter(),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'[A-Za-z0-9]')),
                         passportMaskFormatter
                       ],
                       [
@@ -136,16 +227,18 @@ class _MyIdScreenState extends State<MyIdScreen> {
               } else if (state is MyidCodeErrorState) {
                 loadingService.closeLoading(context);
                 toastService.error(message: state.message ?? "Xatolik Bor");
-                print(state.message ?? "Xatolik Bor");
+                if (kDebugMode) {
+                  print(state.message ?? "Xatolik Bor");
+                }
               } else if (state is MyidCodeSuccessState) {
                 loadingService.closeLoading(context);
 
                 if (mounted) {
-                   AppContoller.create(context, passport: passportController.text);
+                  AppContoller.create(context,
+                      passport: passportController.text);
                 }
-               
 
-                print("Successfully Post data");
+                if (kDebugMode) print("Successfully Post data");
               }
             },
           ),
@@ -157,11 +250,11 @@ class _MyIdScreenState extends State<MyIdScreen> {
               } else if (state is AppCreateErrorState) {
                 loadingService.closeLoading(context);
                 toastService.error(message: state.message ?? "Xatolik Bor");
-                print(state.message ?? "Xatolik Bor");
+                if (kDebugMode) print(state.message ?? "Xatolik Bor");
               } else if (state is AppCreateSuccessState) {
                 loadingService.closeLoading(context);
-                 print("STATE DATA : ");
-                 print(state.data);
+                if (kDebugMode) print("STATE DATA : ");
+                if (kDebugMode) print(state.data);
                 if (mounted) {
                   AppContoller.refreshAll(context);
                   context.replace('/singleApplication', extra: {
@@ -170,15 +263,20 @@ class _MyIdScreenState extends State<MyIdScreen> {
                 }
                 toastService.success(message: "Muvafaqqiyatli Yaratildi");
 
-                print("Successfully Post data");
+                if (kDebugMode) print("Successfully Post data");
               }
             },
           ),
           const Spacer(),
-          CustomIcon(
-            icon: 'assets/icons/myid.svg',
-            color: AppConstant.primaryColor,
-            width: 300,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CustomIcon(
+                icon: 'assets/icons/myid.svg',
+                color: AppConstant.primaryColor,
+                width: 140.w,
+              ),
+            ],
           ),
           const Spacer(),
           CheckboxListTile(
@@ -189,12 +287,21 @@ class _MyIdScreenState extends State<MyIdScreen> {
             checkboxShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(5.r),
             ),
-            onChanged: (value) {
-              setState(
-                () {
-                  isChecked = value!;
-                },
-              );
+            onChanged: (value) async {
+              if (selected == "Да") {
+                if (!isChecked) {
+                  if ((await showOferta()) != null) {
+                    isChecked = true;
+                  }
+                } else {
+                  isChecked = false;
+                }
+                setState(() {});
+              } else {
+                toastService.error(
+                    message:
+                        "Обслуживание доступно только официально трудоустроенным клиентам");
+              }
             },
             title: CustomText(
               text: 'Я ознакомился с публичной офертой и согласен со всем',
@@ -203,38 +310,52 @@ class _MyIdScreenState extends State<MyIdScreen> {
               weight: FontWeight.w400,
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 12.h),
           CustomButton(
             text: 'Поиск',
             color: passportController.text.length == 9 &&
                     dateController.text.length == 10 &&
-                    isChecked
+                    isChecked &&
+                    selected == "Да"
                 ? AppConstant.primaryColor
                 : AppConstant.greyColor1,
             onTap: () async {
               if (passportController.text.length == 9 &&
                   dateController.text.length == 10 &&
-                  isChecked) {
-                MyIdResult? data = await MyIdService().scan(
+                  isChecked &&
+                  selected == "Да") {
+                final data = await MyIdService().scan(
                     passport: passportController.text,
                     birthdate: dateController.text.replaceAll("/", "."));
+                if (data is MyIdResult?) {
+                  if (kDebugMode) {
+                    for (var i = 0; i < 100; i++) {
+                      print("++++++++++++++++++++++++++++++++++++++++++++");
+                    }
+                  }
+                  if (kDebugMode) print(data.toString());
 
-                for (var i = 0; i < 100; i++) {
-                  print("++++++++++++++++++++++++++++++++++++++++++++");
+                  if (data != null && data.code != null) {
+                    if (kDebugMode) print(data.comparison);
+                    if (kDebugMode) print(data.code);
+                    await MyidController.code(context,
+                        code: data.code,
+                        passport: passportController.text.replaceAll(" ", ""),
+                        comparison_value:
+                            double.tryParse(data.comparison.toString()) ?? 0);
+                  } else {
+                    toastService.error(message: "Tanib bo'lmadi");
+                  }
+                } else if (data is Error) {
+                  toastService.error(
+                      message: data.stackTrace == null
+                          ? "Tanib bo'lmadi"
+                          : data.stackTrace.toString());
                 }
-                print(data.toString());
-
-                if (data != null && data.code != null) {
-                  print(data.comparison);
-                  print(data.code);
-                  await MyidController.code(context,
-                      code: data.code,
-                      passport: passportController.text.replaceAll(" ", ""),
-                      comparison_value:
-                          double.tryParse(data.comparison.toString()) ?? 0);
-                } else {
-                  toastService.error(message: "Tanib bo'lmadi");
-                }
+              } else if (selected == "Нет") {
+                toastService.error(
+                    message:
+                        "Обслуживание доступно только официально трудоустроенным клиентам");
               }
             },
           ),

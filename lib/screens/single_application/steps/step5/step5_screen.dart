@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/add_product/app_add_product_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/cancel/app_cancel_bloc.dart';
@@ -331,7 +332,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                       loadingService.closeLoading(context);
                       toastService.error(
                           message: state.message ?? "Xatolik Bor");
-                      print(state.message ?? "Xatolik Bor");
+                     if (kDebugMode)   print(state.message ?? "Xatolik Bor");
                     } else if (state is AppSelectSuccessState) {
                       loadingService.closeLoading(context);
 
@@ -347,7 +348,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                       }
                       toastService.success(message: "Muvafaqqiyatli qo'shildi");
 
-                      print("Successfully Post data");
+                    if (kDebugMode)    print("Successfully Post data");
                     }
                   },
                 ),
@@ -360,7 +361,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                       loadingService.closeLoading(context);
                       toastService.error(
                           message: state.message ?? "Xatolik Bor");
-                      print(state.message ?? "Xatolik Bor");
+                    if (kDebugMode)    print(state.message ?? "Xatolik Bor");
                     } else if (state is AppCancelSuccessState) {
                       loadingService.closeLoading(context);
                       if (mounted) {
@@ -375,7 +376,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                       }
                       toastService.success(message: "Muvafaqqiyatli bekor qilindi");
 
-                      print("Successfully Post data");
+                    if (kDebugMode)    print("Successfully Post data");
                     }
                   },
                 ),

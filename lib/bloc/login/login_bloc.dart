@@ -22,10 +22,19 @@ class LoginBloc extends Cubit<LoginState> {
         "password": password,
       },
     );
-  
 
     if (response.statusCode == 200) {
-      emit(LoginSuccessState(data: response.data));
+      if (response.data?["user"]?["role"] == "USER") {
+        emit(LoginSuccessState(data: response.data));
+      } else {
+        emit(
+          LoginErrorState(
+            title: "Kirishda xatolik",
+            message: "Kirishda xatolik",
+            statusCode: 401,
+          ),
+        );
+      }
     } else {
       emit(
         LoginErrorState(

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 class DioExceptions implements Exception {
   late String message;
@@ -58,7 +59,9 @@ class DioExceptions implements Exception {
   @override
   String toString() {
     // ignore: avoid_print
-    print(message);
+    if (kDebugMode) {
+        print(message);
+     }
     return message;
   }
 }

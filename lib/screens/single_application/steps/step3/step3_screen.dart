@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:premium_pay_seller/bloc/app/scoring/app_scoring_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/scoring/app_scoring_state.dart';
 import 'package:premium_pay_seller/controller/app_contoller.dart';
+import 'package:premium_pay_seller/core/extensions/date_extensions.dart';
 import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/service/loading.dart';
 import 'package:premium_pay_seller/service/toast.dart';
@@ -34,6 +37,31 @@ class _Step3ScreenState extends State<Step3Screen> {
     isSelect = widget.app["status"] == "WAITING_SCORING";
     super.initState();
   }
+
+  bool hasExtra() {
+    return (DateTime.parse(widget.app["createdAt"].toString())..add(const Duration(hours: 5))).day > 14;
+  }
+
+  String formatDateFull(int day) {
+    DateTime now = DateTime.parse(widget.app["createdAt"].toString())..add(const Duration(hours: 5));
+    int extraMonth = hasExtra() ? 2 : 1;
+    int year = now.year;
+    int month = now.month + extraMonth;
+    if (month > 12) {
+      month = month % 12;
+      year += 1;
+    }
+    return DateFormat('dd/MM/yyyy').format(new DateTime(year,month,day));
+  }
+
+
+
+
+
+
+ 
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -83,10 +111,10 @@ class _Step3ScreenState extends State<Step3Screen> {
               });
             },
             children: List.generate(
-              20,
+              14,
               (index) => Center(
                 child: CustomText(
-                  text: '${index + 1}',
+                  text:  formatDateFull(index+1),
                   color: AppConstant.blackColor,
                   size: 16,
                   weight: FontWeight.bold,
@@ -116,6 +144,26 @@ class _Step3ScreenState extends State<Step3Screen> {
             ],
           ),
         ),
+        SizedBox(
+          height: 16.h,
+        ),
+        RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            text: 'Первый платёж -  ',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: AppConstant.blackColor,
+              fontWeight: FontWeight.w400,
+            ),
+            children: <TextSpan>[
+              TextSpan(
+                text: '${formatDateFull(selectedDay)}',
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+            ],
+          ),
+        ),
         BlocListener<AppScoringBloc, AppScoringState>(
           child: const SizedBox(),
           listener: (context, state) async {
@@ -124,7 +172,7 @@ class _Step3ScreenState extends State<Step3Screen> {
             } else if (state is AppScoringErrorState) {
               loadingService.closeLoading(context);
               toastService.error(message: state.message ?? "Xatolik Bor");
-              print(state.message ?? "Xatolik Bor");
+              if (kDebugMode) print(state.message ?? "Xatolik Bor");
             } else if (state is AppScoringSuccessState) {
               loadingService.closeLoading(context);
 
@@ -133,14 +181,14 @@ class _Step3ScreenState extends State<Step3Screen> {
                 setState(() {});
                 AppContoller.refreshSingle(context,
                     id: int.tryParse(widget.app["id"].toString()) ?? 0);
-                    await Future.delayed(const Duration(seconds: 8));
+                await Future.delayed(const Duration(seconds: 8));
                 if (mounted) {
                   context.pop();
                 }
               }
               toastService.success(message: "Muvafaqqiyatli yuborildi");
 
-              print("Successfully Post data");
+              if (kDebugMode) print("Successfully Post data");
             }
           },
         ),
@@ -148,7 +196,9 @@ class _Step3ScreenState extends State<Step3Screen> {
         CustomButton(
           text: "Отправить на Скоринг",
           onTap: () {
-            AppContoller.scoring(context, id: int.tryParse(widget.app["id"].toString()) ?? 0, dayOfPayment: selectedDay);
+            AppContoller.scoring(context,
+                id: int.tryParse(widget.app["id"].toString()) ?? 0,
+                dayOfPayment: selectedDay);
           },
         ),
         SizedBox(height: 16.h),

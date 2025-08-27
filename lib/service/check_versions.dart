@@ -18,3 +18,7 @@ Future<bool> isAvailableApp(String version) async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   return compareVersions(packageInfo.version, version) >= 0;
 }
+
+Future<String> getAppVersion()async{
+  return (await PackageInfo.fromPlatform()).version;
+}

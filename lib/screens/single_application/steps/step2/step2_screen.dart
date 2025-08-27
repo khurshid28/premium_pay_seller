@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:premium_pay_seller/bloc/app/add_detail/app_add_detail_bloc.dart';
@@ -31,8 +32,8 @@ class _Step2ScreenState extends State<Step2Screen> {
     filter: {"#": RegExp(r'[0-9]')},
   );
 
-  TextEditingController phoneControler = TextEditingController();
-  TextEditingController phone2Controler = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController phone2Controller = TextEditingController();
 
   @override
   void initState() {
@@ -43,14 +44,21 @@ class _Step2ScreenState extends State<Step2Screen> {
 
   @override
   void dispose() {
-    phone2Controler.clear();
-    phoneControler.clear();
+    phone2Controller.clear();
+    phoneController.clear();
     super.dispose();
   }
 
-  
   LoadingService loadingService = LoadingService();
   ToastService toastService = ToastService();
+  Map relations = {
+    "FATHER": "Отец",
+    "MOTHER": "Мать",
+    "BROTHER/SISTER": "Брат или сестра",
+    "FRIEND": "Друг/подруга",
+    "OTHER": "Другой"
+  };
+  String? selectedRelation;
 
   @override
   Widget build(BuildContext context) {
@@ -145,7 +153,7 @@ class _Step2ScreenState extends State<Step2Screen> {
         'fields': [
           {
             "title": '90 123 45 67',
-            "controller": phoneControler,
+            "controller": phoneController,
             "prefix": "+998",
             "disable": false,
             "keyboardType": TextInputType.number,
@@ -154,9 +162,10 @@ class _Step2ScreenState extends State<Step2Screen> {
             ]
           },
           {
+            "relation": true,
             "title": '90 123 45 67',
             "keyboardType": TextInputType.number,
-            "controller": phone2Controler,
+            "controller": phone2Controller,
             "prefix": "+998",
             "disable": false,
             "masks": [
@@ -166,8 +175,6 @@ class _Step2ScreenState extends State<Step2Screen> {
         ],
       },
     ];
-
-  
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -195,48 +202,63 @@ class _Step2ScreenState extends State<Step2Screen> {
                       title: step2CustomTileData[index]['title'],
                       leadingIcon: step2CustomTileData[index]['icon'],
                       fields: step2CustomTileData[index]['fields'],
-                      index: index,
+                      relation: selectedRelation,
+                      onChangedRelation: (r) {
+                        setState(() {
+                          selectedRelation = r;
+                        });
+                      },
                     ),
                   ),
                 ),
-
                 const Spacer(),
-                   BlocListener<AppAddDetailBloc, AppAddDetailState>(
-            child: const SizedBox(),
-            listener: (context, state) async {
-              if (state is AppAddDetailWaitingState) {
-                loadingService.showLoading(context);
-              } else if (state is AppAddDetailErrorState) {
-                loadingService.closeLoading(context);
-                toastService.error(message: state.message ?? "Xatolik Bor");
-                print(state.message ?? "Xatolik Bor");
-              } else if (state is AppAddDetailSuccessState) {
-                loadingService.closeLoading(context);
-               
-                if (mounted) {
-                  AppContoller.refreshSingle(context, id: int.tryParse(widget.app["id"].toString()) ?? 0);
-                  context.replace('/singleApplication/step3', extra: {
-                   'app': state.data,
-                },);
-                }
-                toastService.success(message: "Muvafaqqiyatli qo'shildi");
+                BlocListener<AppAddDetailBloc, AppAddDetailState>(
+                  child: const SizedBox(),
+                  listener: (context, state) async {
+                    if (state is AppAddDetailWaitingState) {
+                      loadingService.showLoading(context);
+                    } else if (state is AppAddDetailErrorState) {
+                      loadingService.closeLoading(context);
+                      toastService.error(
+                          message: state.message ?? "Xatolik Bor");
+                      if (kDebugMode) print(state.message ?? "Xatolik Bor");
+                    } else if (state is AppAddDetailSuccessState) {
+                      loadingService.closeLoading(context);
 
+                      if (mounted) {
+                        AppContoller.refreshSingle(context,
+                            id: int.tryParse(widget.app["id"].toString()) ?? 0);
+                        context.replace(
+                          '/singleApplication/step3',
+                          extra: {
+                            'app': state.data,
+                          },
+                        );
+                      }
+                      toastService.success(message: "Muvafaqqiyatli qo'shildi");
 
-                print("Successfully Post data");
-              }
-            },
-          ),
-       
-
+                      if (kDebugMode) print("Successfully Post data");
+                    }
+                  },
+                ),
                 Padding(
                   padding: EdgeInsets.only(bottom: 16.h),
                   child: CustomButton(
                     text: 'Подтвердить информация',
-                    color: phoneControler.text.length ==12 && phone2Controler.text.length ==12  ?AppConstant.primaryColor :AppConstant.greyColor1,
+                    color: phoneController.text.length == 12 &&
+                            phone2Controller.text.length == 12 && selectedRelation !=null
+                        ? AppConstant.primaryColor
+                        : AppConstant.greyColor1,
                     onTap: () {
-
-                      if (phoneControler.text.length ==12 && phone2Controler.text.length ==12  ) {
-                        AppContoller.addDetail(context, id: int.tryParse(widget.app["id"].toString()) ?? 0, phone: "+998" + phoneControler.text.replaceAll(" ", ""), phone2:  "+998" + phone2Controler.text.replaceAll(" ", ""));
+                      if (phoneController.text.length == 12 &&
+                          phone2Controller.text.length == 12 && selectedRelation !=null) {
+                        AppContoller.addDetail(context,
+                            id: int.tryParse(widget.app["id"].toString()) ?? 0,
+                            phone: "+998" +
+                                phoneController.text.replaceAll(" ", ""),
+                            phone2: "+998" +
+                                phone2Controller.text.replaceAll(" ", ""),
+                                relation: selectedRelation);
                       }
                     },
                   ),

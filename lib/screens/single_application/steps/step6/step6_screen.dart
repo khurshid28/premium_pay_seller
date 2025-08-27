@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/finish/app_finish_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/finish/app_finish_state.dart';
@@ -99,7 +100,7 @@ class _Step6ScreenState extends State<Step6Screen> {
                       loadingService.closeLoading(context);
                       toastService.error(
                           message: state.message ?? "Xatolik Bor");
-                      print(state.message ?? "Xatolik Bor");
+                      if (kDebugMode)  print(state.message ?? "Xatolik Bor");
                     } else if (state is AppFinishSuccessState) {
                       loadingService.closeLoading(context);
 
@@ -117,7 +118,7 @@ class _Step6ScreenState extends State<Step6Screen> {
                       }
                       toastService.success(message: "Muvafaqqiyatli Tugatildi");
 
-                      print("Successfully Post data");
+                    if (kDebugMode)    print("Successfully Post data");
                     }
                   },
                 ),

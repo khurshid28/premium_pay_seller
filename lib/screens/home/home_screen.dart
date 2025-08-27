@@ -5,6 +5,7 @@ import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/controller/version_controller.dart';
 import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/service/check_versions.dart';
+import 'package:premium_pay_seller/service/download_last_version.dart';
 import 'package:premium_pay_seller/service/toast.dart';
 import 'package:premium_pay_seller/widgets/common/custom_loading.dart';
 
@@ -12,6 +13,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../bloc/app/all/all_bloc.dart';
 import '../../bloc/app/all/all_state.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -142,6 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               SizedBox(
                                 height: 16.h,
                               ),
+                              CustomButton(text: "Скачать", onTap: DownLoadLastVersion),
                             ],
                           ),
                         ),
@@ -159,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
           context.push('/myId');
         },
         child: CustomIcon(
-          icon: 'assets/icons/pencil.svg',
+          icon: 'assets/icons/person.svg',
           color: AppConstant.whiteColor,
           width: 30,
         ),

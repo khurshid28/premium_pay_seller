@@ -10,12 +10,12 @@ class CustomContainer extends StatelessWidget {
     this.margin,
     this.color,
     this.bordercolor,
-     this.borderWidth,
+    this.borderWidth,
     required this.child,
   });
   double? height;
   double? width;
-   double? borderWidth;
+  double? borderWidth;
   Color? color;
   Color? bordercolor;
   Widget child;
@@ -24,20 +24,25 @@ class CustomContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      width: width,
-      padding: padding,
-      margin: margin,
-      decoration: BoxDecoration(
-        color: color ?? AppConstant.whiteColor,
-        borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(
-          color: bordercolor ?? AppConstant.blackColor,
-          width:borderWidth?? 0.1,
-        ),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: 40.h,
       ),
-      child: child,
+      child: Container(
+        height: height,
+        width: width,
+        padding: padding,
+        margin: margin,
+        decoration: BoxDecoration(
+          color: color ?? AppConstant.whiteColor,
+          borderRadius: BorderRadius.circular(10.r),
+          border: Border.all(
+            color: bordercolor ?? AppConstant.blackColor,
+            width: borderWidth ?? 0.1,
+          ),
+        ),
+        child: child,
+      ),
     );
   }
 }

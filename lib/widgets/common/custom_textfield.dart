@@ -7,17 +7,21 @@ class CustomTextfield extends StatelessWidget {
     super.key,
     required this.textEditingController,
     this.prefixIcon,
+     this.suffixIcon,
     this.hintText,
     this.keyboardType,
     this.maxlines,
     this.minlines,
+    this.maxLength = 50,
     this.onChanged,
+    this.onTap,
     this.inputFormatters = const [],
     this.textCapitalization,
     this.readOnly = false
   });
   TextEditingController textEditingController;
   Widget? prefixIcon;
+  Widget? suffixIcon;
   String? hintText;
   TextInputType? keyboardType;
   int? maxlines;
@@ -25,21 +29,34 @@ class CustomTextfield extends StatelessWidget {
   List<TextInputFormatter> inputFormatters =[];
   TextCapitalization? textCapitalization;
   void Function(String)? onChanged;
+  void Function()? onTap;
   bool readOnly;
+   int? maxLength;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       inputFormatters: inputFormatters,
       controller: textEditingController,
+      onTap: onTap,
       keyboardType: keyboardType,
       minLines: minlines,
       maxLines: maxlines,
       cursorColor: AppConstant.primaryColor,
-      showCursor: false,
+      showCursor: !readOnly,
       readOnly: readOnly,
+       maxLength : maxLength,
+        buildCounter: (
+            BuildContext context, {
+            required int currentLength,
+            required bool isFocused,
+            required int? maxLength,
+          }) {
+            return null; 
+          },
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
           borderSide: const BorderSide(

@@ -24,8 +24,11 @@ class CustomText extends StatelessWidget {
         color: color,
         fontSize: size.sp,
         fontWeight: weight,
+       
       ),
       textAlign: textAlign,
+      // overflow: TextOverflow.ellipsis,
+
     );
   }
 }

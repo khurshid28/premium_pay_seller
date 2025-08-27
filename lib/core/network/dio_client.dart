@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart' as dio;
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:premium_pay_seller/core/network/auth_check_interceptor.dart';
 import 'package:premium_pay_seller/core/network/dio_exception.dart';
 
@@ -63,7 +64,9 @@ class DioClient {
       return e.response!;
     } catch (e) {
       // ignore: avoid_print
-      print(e);
+     if (kDebugMode) {
+        print(e);
+     }
       rethrow;
     }
   }
@@ -189,7 +192,9 @@ class DioClient {
       return e.response!;
     } catch (e) {
       // ignore: avoid_print
-      print(e);
+      if (kDebugMode) {
+        print(e);
+     }
       rethrow;
     }
   }

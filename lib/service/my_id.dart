@@ -1,7 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:premium_pay_seller/export_files.dart';
 
 class MyIdService {
-  FutureOr<MyIdResult?> scan(
+  FutureOr scan(
       {required String passport, required String birthdate}) async {
    
  
@@ -16,7 +17,7 @@ class MyIdService {
         clientId: Environment.myIdClientId,
         clientHash: Environment.myIdClientHash,
         clientHashId: Environment.myIdClientHashId,
-        environment: MyIdEnvironment.DEBUG,
+        environment: MyIdEnvironment.PRODUCTION,
 
         // cameraResolution : MyIdCameraResolution.LOW,
         // imageFormat: MyIdImageFormat.PNG,
@@ -28,13 +29,16 @@ class MyIdService {
         passportData: passport,
         dateOfBirth: birthdate, 
         minAge: 18,
+        // cameraSelector: MyIdCameraSelector.BACK
       ),
       // iosAppearance: const MyIdIOSAppearance(),
     );
 
     return result; 
   } catch (e) {
-    print(e); 
+   if (kDebugMode)   print(e); 
+    return e;
+    
   }
   }
 }

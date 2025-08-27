@@ -1,4 +1,5 @@
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/service/check_versions.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({super.key});
@@ -10,6 +11,17 @@ class SupportScreen extends StatefulWidget {
 class _SupportScreenState extends State<SupportScreen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
   TextEditingController supportController = TextEditingController();
+
+  String version = "";
+  @override
+  void initState() {
+    getAppVersion().then((e) {
+      setState(() {
+        version = e;
+      });
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +50,7 @@ class _SupportScreenState extends State<SupportScreen> {
           const Spacer(),
           customLogo(false),
           CustomText(
-            text: 'Версия 1.0.0',
+            text: 'Версия $version',
             color: AppConstant.greyColor,
             size: 14,
             weight: FontWeight.w200,

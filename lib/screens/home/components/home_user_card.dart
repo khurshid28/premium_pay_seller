@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:premium_pay_seller/controller/app_contoller.dart';
+import 'package:premium_pay_seller/core/extensions/date_extensions.dart';
 import 'package:premium_pay_seller/export_files.dart';
 
 // ignore: must_be_immutable
@@ -15,7 +16,7 @@ class AllAppCard extends StatelessWidget {
     List<Map> res = [
       {
         "date":
-            format.format(DateTime.parse(cardList[0]["createdAt"].toString())),
+            format.formatUtc5(DateTime.parse(cardList[0]["createdAt"].toString())),
         "items": [cardList[0]]
       }
     ];
@@ -24,11 +25,11 @@ class AllAppCard extends StatelessWidget {
 
       if (format
           .parse(format
-              .format(DateTime.parse(cardList[i]["createdAt"].toString())))
+              .formatUtc5(DateTime.parse(cardList[i]["createdAt"].toString())))
           .isBefore(format.parse(old["date"].toString()))) {
         res.add({
           "date": format
-              .format(DateTime.parse(cardList[i]["createdAt"].toString())),
+              .formatUtc5(DateTime.parse(cardList[i]["createdAt"].toString())),
           "items": [cardList[i]]
         });
       } else {
@@ -104,9 +105,10 @@ class AllAppCard extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CustomTile(
-                      title: item["fullname"] ?? "",
+                      app: item,
+                      title: (item["fullname"] ?? "").toString(),
                       subtitle: DateFormat.Hm()
-                          .format(DateTime.parse(item["createdAt"].toString())),
+                          .formatUtc5(DateTime.parse(item["createdAt"].toString())),
                       leadingIcon: 'assets/icons/person.svg',
                       index: index,
                       status: item["status"] ?? "",
