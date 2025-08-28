@@ -95,7 +95,7 @@ class _SingleCardState extends State<SingleCard> {
 
       case "CONFIRMED":
       //changed now
-        return AppPermission(allowed: true, passed: true);
+        return AppPermission(allowed: false, passed: true);
 
       case "FINISHED":
       
