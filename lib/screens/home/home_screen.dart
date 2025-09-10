@@ -6,6 +6,7 @@ import 'package:premium_pay_seller/controller/version_controller.dart';
 import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/service/check_versions.dart';
 import 'package:premium_pay_seller/service/download_last_version.dart';
+import 'package:premium_pay_seller/service/fmc_token.dart';
 import 'package:premium_pay_seller/service/toast.dart';
 import 'package:premium_pay_seller/widgets/common/custom_loading.dart';
 
@@ -55,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
   ToastService toastService = ToastService();
   @override
   Widget build(BuildContext context) {
+    getFcmToken().then(print);
     return CustomScaffold(
       customAppBar: PreferredSize(
         preferredSize: Size.fromHeight(60.h),

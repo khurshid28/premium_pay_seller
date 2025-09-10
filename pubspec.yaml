@@ -61,6 +61,9 @@ dependencies:
   url_launcher: ^6.3.1
   syncfusion_flutter_pdfviewer: 
   share_plus: ^11.1.0
+  # notifications
+  firebase_messaging: ^16.0.1
+  flutter_local_notifications: ^19.4.1
 
 dev_dependencies:
   flutter_test:

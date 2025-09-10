@@ -175,7 +175,7 @@ class CustomTile extends StatelessWidget {
   }
 
   statusIcon<String>(String statusCode) {
-    if (kDebugMode)  print(statusCode);
+    
     if (statusCode == "FINISHED") {
       return 'checkmark';
     } else if ([

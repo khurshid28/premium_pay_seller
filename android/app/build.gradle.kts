@@ -9,17 +9,24 @@ keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 plugins {
     id("com.android.application")
     id("kotlin-android")
-    id("dev.flutter.flutter-gradle-plugin") // Flutter plugin eng oxirida
+    id("dev.flutter.flutter-gradle-plugin") 
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.premium_pay.premium_pay_seller"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
+        
+
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+
+        
+
     }
 
     kotlinOptions {
@@ -29,9 +36,12 @@ android {
     defaultConfig {
         applicationId = "com.premium_pay.premium_pay_seller"
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = 11
         versionName = flutter.versionName
+        multiDexEnabled = true
+
+
     }
 
     signingConfigs {
@@ -58,4 +68,13 @@ android {
 
 flutter {
     source = "../.."
+}
+
+
+
+dependencies {
+   
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
+    implementation(platform("com.google.firebase:firebase-bom:34.2.0"))
+    implementation("com.google.firebase:firebase-analytics")
 }

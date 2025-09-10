@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "988591260565",
+    "project_id": "premiumpay-956a7",
+    "storage_bucket": "premiumpay-956a7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988591260565:android:14aae60e9dd7bdc48e6c9c",
+        "android_client_info": {
+          "package_name": "com.premium_pay.premium_pay_seller"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJbbFhxY8_hQ7EOzbOgXRr3zce33_TtCQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
