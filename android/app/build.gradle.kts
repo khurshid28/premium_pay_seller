@@ -28,9 +28,9 @@ android {
 
     defaultConfig {
         applicationId = "com.premium_pay.premium_pay_seller"
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 10
+        versionCode = 11
         versionName = flutter.versionName
     }
 

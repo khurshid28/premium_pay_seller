@@ -29,139 +29,147 @@ class CustomTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomContainer(
-      // height: isHomeCard ? 50.h : 70.h,
-      width: 1.sw,
-      child: ListTile(
-        onTap: onTap,
-        minTileHeight: isHomeCard ? 50.h : 70.h,
-        horizontalTitleGap: 10.w,
-        isThreeLine: false,
-        leading: isHomeCard
-            ? CustomIcon(
-                icon: leadingIcon,
-                color: AppConstant.primaryColor,
-                width: 30,
-              )
-            : CircleAvatar(
-                radius: 20.r,
-                backgroundColor:
-                    AppConstant.primaryColor.withOpacity(index == 0 ? 1 : 0.3),
-                child: CustomIcon(
-                  icon: leadingIcon,
-                  color: AppConstant.whiteColor,
-                  width: 25,
-                ),
-              ),
-        title: CustomText(
-          text: title,
-          color: AppConstant.blackColor,
-          size: isHomeCard ? 14.sp : 16.sp,
-          weight: FontWeight.w400,
-        ),
-        subtitle: isTrailing
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (app?["limit"] != null && app?["status"] == "LIMIT")
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CustomText(
-                            text:
-                                "ЛИМИТ : ${num.tryParse((app?["limit"] ?? "").toString()).toMoney()}",
-                            color: AppConstant.greenColor,
-                            size: 12.sp,
-                            weight: FontWeight.w400,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                        ]),
-                  if (app?["status"] == "WAITING_SCORING")
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CustomText(
-                            text: "Скоринг",
-                            color: AppConstant.blueColor,
-                            size: 12.sp,
-                            weight: FontWeight.w400,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                        ]),
-                  if (app?["status"] == "WAITING_BANK_UPDATE")
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CustomText(
-                            text: "Ожидание в банке",
-                            color: AppConstant.blueColor,
-                            size: 12.sp,
-                            weight: FontWeight.w400,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                        ]),
-                  if (app?["status"] == "WAITING_BANK_CONFIRM")
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CustomText(
-                            text: "Ожидание в банковском приложении",
-                            color: AppConstant.blueColor,
-                            size: 12.sp,
-                            weight: FontWeight.w400,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                        ]),
-                  if (app?["status"] == "CONFIRMED")
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CustomText(
-                            text: " Закoнчить заявку",
-                            color: AppConstant.blueColor,
-                            size: 12.sp,
-                            weight: FontWeight.w400,
-                          ),
-                          SizedBox(
-                            height: 8.h,
-                          ),
-                        ]),
-                  CustomText(
-                    text: subtitle,
-                    color: AppConstant.blackColor,
-                    size: isHomeCard ? 10.sp : 12.sp,
-                    weight: FontWeight.w200,
+    return Container(
+      child: Padding(
+        padding:EdgeInsets.all(10.w),
+        child: CustomContainer(
+          // height: isHomeCard ? 50.h : 70.h,
+          width: 1.sw,
+          bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
+         
+          child: ListTile(
+            onTap: onTap,
+            minTileHeight: isHomeCard ? 50.h : 70.h,
+            horizontalTitleGap: 10.w,
+            isThreeLine: false,
+            leading: isHomeCard
+                ? CustomIcon(
+                    icon: leadingIcon,
+                    color: AppConstant.primaryColor,
+                    width: 30,
+                  )
+                : CircleAvatar(
+                    radius: 20.r,
+                    backgroundColor:
+                        AppConstant.primaryColor.withOpacity(index == 0 ? 1 : 0.3),
+                    child: CustomIcon(
+                      icon: leadingIcon,
+                      color: AppConstant.whiteColor,
+                      width: 25,
+                    ),
                   ),
-                ],
-              )
-            : null,
-        trailing: isTrailing
-            ? CustomIcon(
-                icon: 'assets/icons/${statusIcon(status)}.svg',
-                color: statusColor(status),
-                width: isHomeCard ? 25 : 30,
-              )
-            : null,
+            title: CustomText(
+              text: title,
+              color: AppConstant.blackColor,
+              size: isHomeCard ? 14.sp : 16.sp,
+              weight: FontWeight.w400,
+            ),
+            subtitle: isTrailing
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (app?["limit"] != null && app?["status"] == "LIMIT")
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CustomText(
+                                text:
+                                    "ЛИМИТ : ${num.tryParse((app?["limit"] ?? "").toString()).toMoney()}",
+                                color: AppConstant.greenColor,
+                                size: 12.sp,
+                                weight: FontWeight.w400,
+                              ),
+                              SizedBox(
+                                height: 8.h,
+                              ),
+                            ]),
+                      if (app?["status"] == "WAITING_SCORING")
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CustomText(
+                                text: "Скоринг",
+                                color: AppConstant.blueColor,
+                                size: 12.sp,
+                                weight: FontWeight.w400,
+                              ),
+                              SizedBox(
+                                height: 8.h,
+                              ),
+                            ]),
+                      if (app?["status"] == "WAITING_BANK_UPDATE")
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CustomText(
+                                text: "Ожидание в банке",
+                                color: AppConstant.blueColor,
+                                size: 12.sp,
+                                weight: FontWeight.w400,
+                              ),
+                              SizedBox(
+                                height: 8.h,
+                              ),
+                            ]),
+                      if (app?["status"] == "WAITING_BANK_CONFIRM")
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CustomText(
+                                text: "Ожидание в банковском приложении",
+                                color: AppConstant.blueColor,
+                                size: 12.sp,
+                                weight: FontWeight.w400,
+                              ),
+                              SizedBox(
+                                height: 8.h,
+                              ),
+                            ]),
+                      if (app?["status"] == "CONFIRMED")
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              CustomText(
+                                text: " Закoнчить заявку",
+                                color: AppConstant.blueColor,
+                                size: 12.sp,
+                                weight: FontWeight.w400,
+                              ),
+                              SizedBox(
+                                height: 8.h,
+                              ),
+                            ]),
+                      CustomText(
+                        text: subtitle,
+                        color: AppConstant.blackColor,
+                        size: isHomeCard ? 10.sp : 12.sp,
+                        weight: FontWeight.w200,
+                      ),
+                    ],
+                  )
+                : null,
+            trailing: isTrailing
+                ? CustomIcon(
+                    icon: 'assets/icons/${statusIcon(status)}.svg',
+                    color: statusColor(status),
+                    width: isHomeCard ? 25 : 30,
+                  )
+                : null,
+          ),
+        ),
       ),
     );
   }

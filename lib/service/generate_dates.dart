@@ -17,8 +17,6 @@
 //   });
 // }
 
-
-
 List<DateTime> getMonthlyDates(
   DateTime startDate,
   int targetDay, {
@@ -31,7 +29,7 @@ List<DateTime> getMonthlyDates(
 
   for (int i = 0; i < months; i++) {
     int year = startDate.year;
-    int month = startDate.month + i +1;
+    int month = startDate.month + i + 1;
 
     year += (month - 1) ~/ 12;
     month = ((month - 1) % 12) + 1;
@@ -39,9 +37,20 @@ List<DateTime> getMonthlyDates(
     int lastDayOfMonth = DateTime(year, month + 1, 0).day;
 
     int day = targetDay <= lastDayOfMonth ? targetDay : lastDayOfMonth;
-    print(i.toString()+">> "+ DateTime(year, month, day).add(const Duration(hours: 5)).toString());
 
-    dates.add(DateTime(year, month, day).add(const Duration(hours: 5)));
+    DateTime date = DateTime(year, month, day).add(const Duration(hours: 5));
+
+    // Agar shanba yoki yakshanba bo‘lsa → dushanbaga suramiz
+    if (date.weekday == DateTime.saturday) {
+      date = date.add(const Duration(days: 2)); // Shanba → Dushanba
+    } else if (date.weekday == DateTime.sunday) {
+      date = date.add(const Duration(days: 1)); // Yakshanba → Dushanba
+    }
+
+    print(
+        "${i + 1}-oy >> Oldingi: ${DateTime(year, month, day)} (weekday=${DateTime(year, month, day).weekday}), Yakuniy: $date (weekday=${date.weekday})");
+
+    dates.add(date);
   }
 
   return dates;

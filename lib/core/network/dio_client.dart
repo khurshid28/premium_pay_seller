@@ -46,7 +46,7 @@ class DioClient {
         onReceiveProgress: onReceiveProgress,
       );
       return response;
-    } on dio.DioError catch (e) {
+    } on dio.DioException catch (e) {
       DioExceptions.fromDioError(e);
       if (e.error is SocketException || e.type == DioExceptionType.unknown) {
         await Future.delayed(
@@ -133,10 +133,10 @@ class DioClient {
         onReceiveProgress: onReceiveProgress,
       );
       return response;
-    } on dio.DioError catch (e) {
+    } on dio.DioException catch (e) {
       DioExceptions.fromDioError(e);
 
-      if (e.error is SocketException || e.type == DioErrorType.unknown) {
+      if (e.error is SocketException || e.type == DioExceptionType.unknown) {
         await Future.delayed(
           const Duration(seconds: 5),
         );
@@ -173,9 +173,9 @@ class DioClient {
         onReceiveProgress: onReceiveProgress,
       );
       return response;
-    } on dio.DioError catch (e) {
+    } on dio.DioException catch (e) {
       DioExceptions.fromDioError(e);
-      if (e.error is SocketException || e.type == DioErrorType.unknown) {
+      if (e.error is SocketException || e.type == DioExceptionType.unknown) {
         await Future.delayed(
           const Duration(seconds: 5),
         );
@@ -217,9 +217,9 @@ class DioClient {
         cancelToken: cancelToken,
       );
       return response.data;
-    } on dio.DioError catch (e) {
+    } on dio.DioException catch (e) {
       DioExceptions.fromDioError(e);
-      if (e.error is SocketException || e.type == DioErrorType.unknown) {
+      if (e.error is SocketException || e.type == DioExceptionType.unknown) {
         await Future.delayed(
           const Duration(seconds: 5),
         );

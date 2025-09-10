@@ -52,11 +52,9 @@ class AllAppCard extends StatelessWidget {
     return RefreshIndicator(
       color: AppConstant.primaryColor,
       displacement: 40.h,
-      elevation: 0,
       onRefresh: () => AppContoller.refreshAll(context),
-      backgroundColor: Colors.transparent,
       child: SingleChildScrollView(
-          padding: EdgeInsets.zero,
+        
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
