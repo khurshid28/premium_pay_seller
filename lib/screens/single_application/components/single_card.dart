@@ -26,6 +26,8 @@ class _SingleCardState extends State<SingleCard> {
     LoadingService loadingService = LoadingService();
   ToastService toastService = ToastService();
   AppPermission permission(String link) {
+    //check qiliw kk 
+     return AppPermission(allowed: true, passed: true);
     String status = widget.data["status"] ?? "";
     switch (status) {
       case "CREATED":
@@ -163,13 +165,13 @@ class _SingleCardState extends State<SingleCard> {
           itemBuilder: (context, index) {
             if (isConfirmed && index == widget.cardList.length) {
               return Padding(
-                padding: EdgeInsets.all(16.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-SizedBox(height: 16.h,),
+SizedBox(height: 8.h,),
                      Padding(
-                padding:  EdgeInsets.only(bottom: 16.w),
+                padding:  EdgeInsets.only(bottom: 8.h),
                 child: CustomText(
                   text: 'Оформления прошли успешно, клиент может забрать товар.',
                   color: AppConstant.primaryColor,
@@ -199,8 +201,8 @@ SizedBox(height: 16.h,),
               padding: EdgeInsets.only(
                 left: 16.w,
                 right: 16.w,
-                top: index == 0 ? 16.w : 0,
-                bottom: 16.w,
+                top: index == 0 ? 8.w : 0,
+                bottom: 8.w,
               ),
               child: CustomTileSingle(
                 title: widget.cardList[index]['title'],

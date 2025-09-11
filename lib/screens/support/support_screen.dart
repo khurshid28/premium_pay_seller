@@ -72,7 +72,7 @@ class _SupportScreenState extends State<SupportScreen> {
           ),
           SizedBox(height: 16.h),
           Padding(
-            padding: EdgeInsets.only(bottom: 32.h),
+            padding: EdgeInsets.only(bottom: 48.h),
             child: CustomButton(
               text: 'Отправить',
               onTap: () {},

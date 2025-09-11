@@ -62,8 +62,8 @@ class AllAppCard extends StatelessWidget {
           padding: EdgeInsets.only(
             left: 16.w,
             right: 16.w,
-            top: index == 0 ? 16.w : 0,
-            bottom: 16.w,
+            top: index == 0 ? 8.w : 0,
+            bottom: 8.w,
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -86,7 +86,7 @@ class AllAppCard extends StatelessWidget {
                             text: sorted[index]["date"].toString(),
                             color: AppConstant.primaryColor,
                             size: 14,
-                            weight: FontWeight.w500,
+                            weight: FontWeight.w600,
                           ),
                         ),
                         Expanded(
@@ -94,7 +94,7 @@ class AllAppCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16.h)
+                    // SizedBox(height: 8.h)
                   ],
                 ),
               ...List.generate((sorted[index]["items"] ?? []).length, (i) {
@@ -128,8 +128,8 @@ class AllAppCard extends StatelessWidget {
                         }
                       },
                     ),
-                    if (i != (sorted[index]["items"] ?? []).length - 1)
-                      SizedBox(height: 16.h)
+                    // if (i != (sorted[index]["items"] ?? []).length - 1)
+                      // SizedBox(height: 8.h)
                   ],
                 );
               }),

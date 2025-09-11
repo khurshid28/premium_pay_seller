@@ -62,17 +62,24 @@ class _MyIdScreenState extends State<MyIdScreen> {
       isScrollControlled: true,
       useSafeArea: true,
       showDragHandle: true,
+      backgroundColor: Colors.white,
       context: context,
       builder: (builder) {
         return Stack(
           children: [
-            SfPdfViewer.asset('assets/public-oferta.pdf'),
+            Padding(
+              padding:  EdgeInsets.only(bottom: 0.2.sh),
+              child: SizedBox(
+                height: 0.8.sh,
+                
+                child: SfPdfViewer.asset('assets/public-oferta.pdf',)),
+            ),
             Positioned(
-                bottom: 20.0.h,
+                bottom: 36.0.h,
                 left: 16.0,
                 right: 16.0,
                 child: Padding(
-                  padding:  EdgeInsets.only(bottom: 20.h),
+                  padding: EdgeInsets.only(bottom: 24.h),
                   child: CustomButton(
                       text: "Согласен",
                       onTap: () {
@@ -119,7 +126,7 @@ class _MyIdScreenState extends State<MyIdScreen> {
 
   myIdScreenBody() {
     return Padding(
-      padding: EdgeInsets.all(16.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,14 +174,14 @@ class _MyIdScreenState extends State<MyIdScreen> {
             ],
           ),
           SizedBox(
-            height: 12.h,
+            height: 8.h,
           ),
           ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
             itemCount: step1TextField.length,
             itemBuilder: (context, index) => Padding(
-              padding: EdgeInsets.only(bottom: 12.h),
+              padding: EdgeInsets.only(bottom: 8.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -270,18 +277,18 @@ class _MyIdScreenState extends State<MyIdScreen> {
               }
             },
           ),
-          const Spacer(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomIcon(
-                icon: 'assets/icons/myid.svg',
-                color: AppConstant.primaryColor,
-                width: 140.w,
-              ),
-            ],
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomIcon(
+                  icon: 'assets/icons/myid.svg',
+                  color: AppConstant.primaryColor,
+                  width: 120.w,
+                ),
+              ],
+            ),
           ),
-          const Spacer(),
           CheckboxListTile(
             controlAffinity: ListTileControlAffinity.leading,
             contentPadding: const EdgeInsets.all(0),
@@ -313,9 +320,9 @@ class _MyIdScreenState extends State<MyIdScreen> {
               weight: FontWeight.w400,
             ),
           ),
-          SizedBox(height: 12.h),
+          SizedBox(height: 8.h),
           Padding(
-            padding: EdgeInsets.only(bottom: 32.h),
+            padding: EdgeInsets.only(bottom: 16.h),
             child: CustomButton(
               text: 'Поиск',
               color: passportController.text.length == 9 &&
@@ -339,7 +346,7 @@ class _MyIdScreenState extends State<MyIdScreen> {
                       }
                     }
                     if (kDebugMode) print(data.toString());
-            
+
                     if (data != null && data.code != null) {
                       if (kDebugMode) print(data.comparison);
                       if (kDebugMode) print(data.code);

@@ -58,21 +58,24 @@ class _AddProductModalState extends State<AddProductArea> {
                       );
                     },
                   )),
-                  CustomButton(
-                    text: 'Применить',
-                    color: isValid ?AppConstant.primaryColor  : AppConstant.greyColor1,
-                    onTap: () {
-                
-
-                     if (isValid) {
-                       if ((int.tryParse(widget.data["price"]["controller"].text.toString().replaceAll(" ", '')) ?? 0 )>= 1000) {
-                          context.pop(widget.data);
-                       } else {
-                         ToastService().error(message: "Минимальная сумма 1000 сум");
+                  Padding(
+                    padding:  EdgeInsets.only(bottom: 48.h),
+                    child: CustomButton(
+                      text: 'Применить',
+                      color: isValid ?AppConstant.primaryColor  : AppConstant.greyColor1,
+                      onTap: () {
+                                    
+                    
+                       if (isValid) {
+                         if ((int.tryParse(widget.data["price"]["controller"].text.toString().replaceAll(" ", '')) ?? 0 )>= 1000) {
+                            context.pop(widget.data);
+                         } else {
+                           ToastService().error(message: "Минимальная сумма 1000 сум");
+                         }
                        }
-                     }
-                      // print(data["name"]["controller"].text);
-                    },
+                        // print(data["name"]["controller"].text);
+                      },
+                    ),
                   ),
                 ],
               ),

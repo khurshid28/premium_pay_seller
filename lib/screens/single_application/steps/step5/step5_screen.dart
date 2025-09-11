@@ -103,6 +103,8 @@ class _Step5ScreenState extends State<Step5Screen> {
               children: [
                 CustomContainer(
                   width: 1.sw,
+                  bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
                   child: Column(
                     children: [
                       Padding(
@@ -225,6 +227,8 @@ class _Step5ScreenState extends State<Step5Screen> {
                       child: CustomContainer(
                         height: 70.h,
                         width: 70.w,
+                        bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
                         color: selectedIndex == index
                             ? AppConstant.primaryColor
                             : Colors.transparent,
@@ -258,12 +262,14 @@ class _Step5ScreenState extends State<Step5Screen> {
                 CustomContainer(
                   margin: EdgeInsets.only(top: 16.h),
                   padding: EdgeInsets.all(16.w),
+                  bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
                   child: Column(
                     children: [
                       CustomIcon(
                         icon: 'assets/icons/checkmark.svg',
                         color: AppConstant.greenColor,
-                        width: 30,
+                        width: 50,
                       ),
                       CustomText(
                         text:
@@ -398,7 +404,7 @@ class _Step5ScreenState extends State<Step5Screen> {
                 ),
                 SizedBox(height: 16.h),
                   Padding(
-        padding: EdgeInsets.only(bottom: 32.h),
+        padding: EdgeInsets.only(bottom: 48.h),
                   child: CustomButton(
                     color: AppConstant.redColor,
                     text: 'Отменить заявка',

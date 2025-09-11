@@ -194,7 +194,7 @@ class _Step3ScreenState extends State<Step3Screen> {
         ),
         SizedBox(height: 16.h),
         Padding(
-        padding: EdgeInsets.only(bottom: 32.h),
+        padding: EdgeInsets.only(bottom: 48.h),
           child: CustomButton(
             text: "Отправить на Скоринг",
             onTap: () {

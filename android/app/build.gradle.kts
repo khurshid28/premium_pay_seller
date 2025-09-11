@@ -37,7 +37,7 @@ android {
         applicationId = "com.premium_pay.premium_pay_seller"
         minSdk = flutter.minSdkVersion
         targetSdk = 36
-        versionCode = 11
+        versionCode = 12
         versionName = flutter.versionName
         multiDexEnabled = true
 

@@ -1,9 +1,14 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:premium_pay_seller/export_files.dart';
+
+
+
 
 // Global plugin instance
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -22,33 +27,40 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       InitializationSettings(android: initializationSettingsAndroid);
 
   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  BigPictureStyleInformation bigPictureStyleInformation =
-      BigPictureStyleInformation(
-    DrawableResourceAndroidBitmap('ic_large_logo'), // large icon
-    largeIcon: DrawableResourceAndroidBitmap('ic_large_logo'),
-    contentTitle: 'PremiumPay Notification',
-    summaryText: 'Xabar matni',
-  );
+  // BigPictureStyleInformation bigPictureStyleInformation =
+  //     BigPictureStyleInformation(
+  //   DrawableResourceAndroidBitmap('ic_large_logo'), // large icon
+  //   largeIcon: DrawableResourceAndroidBitmap('ic_large_logo'),
+  //   contentTitle: 'PremiumPay Notification',
+  //   summaryText: 'Xabar matni',
+  // );
   // Notification details
-  AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
+  AndroidNotificationDetails androidDetails = const AndroidNotificationDetails(
       'high_importance_channel', 'High Importance Notifications',
       icon: 'ic_stat_logo',
       importance: Importance.high,
       priority: Priority.high,
-      styleInformation: bigPictureStyleInformation);
+      largeIcon:   DrawableResourceAndroidBitmap('ic_large_logo'),
+      color: AppConstant.primaryColor
+      // styleInformation: bigPictureStyleInformation
+      
+      );
 
   print("Background message received:");
   print("Message ID: ${message.messageId}");
   print("Notification title: ${message.notification?.title}");
   print("Notification body: ${message.notification?.body}");
   print("Data payload: ${message.data}");
+  final id = message.data['id'] ?? "";
+  final status = message.data["status"] ?? "";
+
 
   await flutterLocalNotificationsPlugin.show(
-    message.hashCode,
-    message.notification?.title ?? "PremiumPay Notification",
-    message.notification?.body ?? "Sizga yangi xabar keldi",
-    NotificationDetails(android: androidDetails),
-  );
+      message.hashCode,
+      message.notification?.title ?? "PremiumPay Notification",
+      message.notification?.body ?? "Sizga yangi xabar keldi",
+      NotificationDetails(android: androidDetails),
+      payload: "$id-$status");
 }
 
 Future<void> requestNotificationPermission() async {
@@ -72,7 +84,6 @@ Future<void> requestNotificationPermission() async {
 Future<void> firebaseInit() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await requestNotificationPermission();
 
   // Register background handler
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -93,32 +104,86 @@ Future<void> firebaseInit() async {
   const AndroidInitializationSettings initializationSettingsAndroid =
       AndroidInitializationSettings('ic_stat_logo');
 
-  final InitializationSettings initializationSettings =
-      InitializationSettings(android: initializationSettingsAndroid);
+  final InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
+  );
 
-  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  await flutterLocalNotificationsPlugin.initialize(
+    initializationSettings,
+    onDidReceiveNotificationResponse: (NotificationResponse response) {
+     
+      final payload = response.payload;
+      if (kDebugMode) {
+        print("Payload : $payload");
+      }
+      if (payload.toString().split("-").length > 1) {
+        final id = payload.toString().split("-")[0];
+        final status = payload.toString().split("-")[1];
+        {
+          if ([
+            "FINISHED",
+            "CANCELED_BY_CLIENT",
+            "CANCELED_BY_SCORING",
+            "CANCELED_BY_DAILY"
+          ].contains(status)) {
+            rootNavigatorKey.currentContext
+                ?.go('/application', extra: {"id": int.tryParse(id) ?? 0});
+          } else {
+            rootNavigatorKey.currentContext?.go('/singleApplication',
+                extra: {"id": int.tryParse(id) ?? 0});
+          }
+        }
+      }
+    },
+  );
 
   // Foreground messages
   FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-    print("Foreground message received:");
-    print("Message ID: ${message.messageId}");
-    print("Notification title: ${message.notification?.title}");
-    print("Notification body: ${message.notification?.body}");
-    print("Data payload: ${message.data}");
-
+    if (kDebugMode) {
+      print("Foreground message received:");
+      print("Message ID: ${message.messageId}");
+      print("Notification title: ${message.notification?.title}");
+      print("Notification body: ${message.notification?.body}");
+      print("Data payload: ${message.data}");
+    }
+    final id = message.data['id'] ?? "";
+    final status = message.data["status"] ?? "";
+    
     await flutterLocalNotificationsPlugin.show(
-      message.hashCode,
-      message.notification?.title ?? "PremiumPay Notification",
-      message.notification?.body ?? "Sizga yangi xabar keldi",
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'high_importance_channel',
-          'High Importance Notifications',
-          icon: 'ic_stat_logo',
-          importance: Importance.high,
-          priority: Priority.high,
+        message.hashCode,
+        message.notification?.title ?? "PremiumPay Notification",
+        message.notification?.body ?? "Sizga yangi xabar keldi",
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'high_importance_channel',
+            'High Importance Notifications',
+            icon: 'ic_stat_logo',
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
         ),
-      ),
-    );
+        payload: "$id-$status");
+  });
+
+  //when open app
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    // Notification bosilganda ishlaydi
+    final id = message.data['id'] ?? "";
+    final status = message.data["status"] ?? "";
+    {
+      if ([
+        "FINISHED",
+        "CANCELED_BY_CLIENT",
+        "CANCELED_BY_SCORING",
+        "CANCELED_BY_DAILY"
+      ].contains(status)) {
+        rootNavigatorKey.currentContext
+            ?.go('/application', extra: {"id": int.tryParse(id) ?? 0});
+      } else {
+        rootNavigatorKey.currentContext
+            ?.go('/singleApplication', extra: {"id": int.tryParse(id) ?? 0});
+      }
+    }
   });
 }

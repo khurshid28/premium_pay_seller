@@ -6,14 +6,17 @@ import 'package:premium_pay_seller/widgets/common/custom_modal.dart';
 
 // ignore: must_be_immutable
 class CustomExpansionTile extends StatelessWidget {
-  CustomExpansionTile(
-      {super.key,
-      required this.title,
-      required this.leadingIcon,
-      required this.fields,
-      this.onChanged,
-      this.onChangedRelation,
-      this.relation});
+  CustomExpansionTile({
+    super.key,
+    required this.title,
+    required this.leadingIcon,
+    required this.fields,
+    this.onChanged,
+    this.onChangedRelation,
+    this.relation,
+    this.bordercolor,
+    this.borderWidth,
+  });
 
   Map relations = {
     "FATHER": "Отец",
@@ -22,6 +25,8 @@ class CustomExpansionTile extends StatelessWidget {
     "FRIEND": "Друг/подруга",
     "OTHER": "Другой"
   };
+  double? borderWidth;
+  Color? bordercolor;
   String title;
   String leadingIcon;
   List<Map<String, dynamic>> fields;
@@ -34,6 +39,8 @@ class CustomExpansionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomContainer(
       width: 1.sw,
+      bordercolor: bordercolor,
+      borderWidth: borderWidth,
       child: ExpansionTile(
         shape: Border.all(style: BorderStyle.none),
         childrenPadding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -61,30 +68,59 @@ class CustomExpansionTile extends StatelessWidget {
                       padding: EdgeInsets.only(bottom: 16.h),
                       child: Column(
                         children: [
-                          Row(
-                            children: [
-                              CustomIcon(
-                                icon: "assets/icons/person.svg",
-                                color: AppConstant.primaryColor,
-                                width: 30.w,
+                          // Row(
+                          //   children: [
+                          //     CustomIcon(
+                          //       icon: "assets/icons/person.svg",
+                          //       color: AppConstant.primaryColor,
+                          //       width: 30.w,
+                          //     ),
+                          //     SizedBox(
+                          //       width: 8.w,
+                          //     ),
+                          //     CustomText(
+                          //       text: "Пожалуйста, укажите контактные данные близкого человека для связи ?",
+                          //       color: AppConstant.blackColor,
+                          //       size: 16,
+                          //       weight: FontWeight.w400,
+                          //     ),
+                          //   ],
+                          // ),
+                          SizedBox(
+                            width: 1.sw - 64.w,
+                            child: RichText(
+                              text: TextSpan(
+                                children: [
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.middle,
+                                    child: Padding(
+                                      padding: EdgeInsets.only(right: 16.w),
+                                      child: CustomIcon(
+                                        icon: "assets/icons/person.svg",
+                                        color: AppConstant.primaryColor,
+                                        width: 30.w,
+                                      ),
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        "Пожалуйста, укажите контактные данные близкого человека для связи",
+                                    style: TextStyle(
+                                      color: AppConstant.blackColor,
+                                      fontSize: 16.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(
-                                width: 8.w,
-                              ),
-                              CustomText(
-                                text: "Кем приходится ?",
-                                color: AppConstant.blackColor,
-                                size: 16,
-                                weight: FontWeight.w400,
-                              ),
-                            ],
+                            ),
                           ),
                           SizedBox(
                             height: 16.h,
                           ),
                           CustomTextfield(
-                            textEditingController:
-                                TextEditingController(text: relations[relation ?? ""] ?? ""),
+                            textEditingController: TextEditingController(
+                                text: relations[relation ?? ""] ?? ""),
                             hintText: relation ?? "Выберите близкого человека",
                             readOnly: true,
                             onTap: () async {

@@ -79,6 +79,7 @@ class _Step4ScreenState extends State<Step4Screen> {
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
+      
       customAppBar: PreferredSize(
         preferredSize: Size.fromHeight(60.h),
         child: CustomAppBar(
@@ -162,6 +163,8 @@ class _Step4ScreenState extends State<Step4Screen> {
                 CustomContainer(
                   margin: EdgeInsets.only(top: 16.h),
                   padding: EdgeInsets.all(16.w),
+                   bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
                   child: Column(
                     children: [
                       Row(
@@ -212,6 +215,8 @@ class _Step4ScreenState extends State<Step4Screen> {
                 CustomContainer(
                   margin: EdgeInsets.only(top: 16.h),
                   padding: EdgeInsets.all(16.w),
+                   bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -236,6 +241,8 @@ class _Step4ScreenState extends State<Step4Screen> {
                             child: CustomContainer(
                               height: 30.h,
                               width: 60.w,
+                               bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
                               color: selectedIndex == index
                                   ? AppConstant.primaryColor
                                   : Colors.transparent,
@@ -270,6 +277,8 @@ class _Step4ScreenState extends State<Step4Screen> {
                       CustomContainer(
                         height: 40.h,
                         width: 1.sw,
+                         bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
                         color: AppConstant.primaryColor,
                         padding: EdgeInsets.symmetric(horizontal: 8.w),
                         child: selectedIndex == null
@@ -337,6 +346,8 @@ class _Step4ScreenState extends State<Step4Screen> {
                       },
                       child: CustomContainer(
                         // height: 50.h,
+                         bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
                         width: 1.sw,
                         padding: EdgeInsets.symmetric(
                             horizontal: 16.w, vertical: 8.h),
@@ -423,7 +434,7 @@ class _Step4ScreenState extends State<Step4Screen> {
                 ),
                 const Spacer(),
                 Padding(
-                  padding: EdgeInsets.only(bottom: 32.h),
+                  padding: EdgeInsets.only(bottom: 80.h),
                   child: CustomButton(
                     text: 'Подтвердить информация',
                     color: selectedIndex != null && addProductData.isNotEmpty

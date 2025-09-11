@@ -16,8 +16,9 @@ class CustomContainer extends StatelessWidget {
   double? height;
   double? width;
   double? borderWidth;
+   Color? bordercolor;
   Color? color;
-  Color? bordercolor;
+ 
   Widget child;
   EdgeInsetsGeometry? padding;
   EdgeInsetsGeometry? margin;

@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:premium_pay_seller/bloc/version/version_bloc.dart';
 import 'package:premium_pay_seller/bloc/version/version_state.dart';
 import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/controller/version_controller.dart';
+import 'package:premium_pay_seller/core/init/firebase.dart';
 import 'package:premium_pay_seller/export_files.dart';
 import 'package:premium_pay_seller/service/check_versions.dart';
 import 'package:premium_pay_seller/service/download_last_version.dart';
@@ -30,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
+
     VersionController.getAppVersion(context);
     AppContoller.getAll(context);
     _timer = Timer.periodic(const Duration(seconds: 10), (Timer timer) {
@@ -43,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
         AppContoller.refreshAll(context);
       }
     });
-
+     requestNotificationPermission();
     super.initState();
   }
 
@@ -56,7 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
   ToastService toastService = ToastService();
   @override
   Widget build(BuildContext context) {
-    getFcmToken().then(print);
+    if (kDebugMode) {
+      getFcmToken().then(print);
+    }
     return CustomScaffold(
       customAppBar: PreferredSize(
         preferredSize: Size.fromHeight(60.h),
@@ -101,6 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
           } else if (state is VersionErrorState) {
             toastService.error(message: "Versiya anishlashda xatolik");
           } else if (state is VersionSuccessState) {
+             
          
             if (!(await isAvailableApp(state.version))) {
               await showDialog(
