@@ -22,12 +22,11 @@ class SingleCard extends StatefulWidget {
 }
 
 class _SingleCardState extends State<SingleCard> {
-
-    LoadingService loadingService = LoadingService();
+  LoadingService loadingService = LoadingService();
   ToastService toastService = ToastService();
   AppPermission permission(String link) {
-    //check qiliw kk 
-     return AppPermission(allowed: true, passed: true);
+    //check qiliw kk
+    //  return AppPermission(allowed: true, passed: true);
     String status = widget.data["status"] ?? "";
     switch (status) {
       case "CREATED":
@@ -96,11 +95,10 @@ class _SingleCardState extends State<SingleCard> {
         break;
 
       case "CONFIRMED":
-      //changed now
+        //changed now
         return AppPermission(allowed: false, passed: true);
 
       case "FINISHED":
-      
         return AppPermission(allowed: false, passed: true);
 
       default:
@@ -127,7 +125,8 @@ class _SingleCardState extends State<SingleCard> {
           num? amount = num.tryParse(widget.data['amount'].toString());
           return "Товаров: ${products.length}︱${amount.toMoney()} сум";
         case "step5":
-          num? payment_amount = num.tryParse(widget.data['payment_amount'].toString());
+          num? payment_amount =
+              num.tryParse(widget.data['payment_amount'].toString());
           return "Месяцев: ${widget.data['expired_month']}︱${payment_amount.toMoney()} сум";
         case "step6":
           return "Дата погашения: ${DateFormat("d MMMM y 'г'", 'ru').formatUtc5(DateTime.parse(widget.data["createdAt"].toString()))}";
@@ -153,108 +152,106 @@ class _SingleCardState extends State<SingleCard> {
       onRefresh: () => AppContoller.refreshSingle(context,
           id: int.tryParse(widget.data["id"].toString()) ?? 0),
       backgroundColor: Colors.transparent,
-      child:
-      
-      
-       BlocListener<AppFinishBloc, AppFinishState>(
-                  child:       ListView.builder(
-          itemCount: widget.cardList.length + (isConfirmed ? 1 : 0),
-          physics: const AlwaysScrollableScrollPhysics(),
-          primary: true,
-          scrollDirection: Axis.vertical,
-          itemBuilder: (context, index) {
-            if (isConfirmed && index == widget.cardList.length) {
+      child: BlocListener<AppFinishBloc, AppFinishState>(
+        child: ListView.builder(
+            itemCount: widget.cardList.length + (isConfirmed ? 1 : 0),
+            physics: const AlwaysScrollableScrollPhysics(),
+            primary: true,
+            scrollDirection: Axis.vertical,
+            itemBuilder: (context, index) {
+              if (isConfirmed && index == widget.cardList.length) {
+                return Padding(
+                  padding:
+                      EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      SizedBox(
+                        height: 8.h,
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 8.h),
+                        child: CustomText(
+                          text:
+                              'Оформления прошли успешно, клиент может забрать товар.',
+                          color: AppConstant.primaryColor,
+                          size: 14,
+                          weight: FontWeight.w400,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      CustomButton(
+                        text: 'Закончить',
+                        onTap: () {
+                          AppContoller.finish(
+                            context,
+                            id: int.tryParse(widget.data["id"].toString()) ?? 0,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              }
+              AppPermission appPermission =
+                  permission(widget.cardList[index]['link'].toString());
+              String subtitle = getSubtitle(
+                  appPermission, widget.cardList[index]['link'].toString());
               return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-SizedBox(height: 8.h,),
-                     Padding(
-                padding:  EdgeInsets.only(bottom: 8.h),
-                child: CustomText(
-                  text: 'Оформления прошли успешно, клиент может забрать товар.',
-                  color: AppConstant.primaryColor,
-                  size: 14,
-                  weight: FontWeight.w400,
-                  textAlign: TextAlign.center,
-                ),),
-              
-                    CustomButton(
-                      text: 'Закончить',
-                      onTap: () {
-                        AppContoller.finish(
-                          context,
-                          id: int.tryParse(widget.data["id"].toString()) ?? 0,
-                        );
-                      },
-                    ),
-                  ],
+                padding: EdgeInsets.only(
+                  left: 16.w,
+                  right: 16.w,
+                  top: index == 0 ? 8.w : 0,
+                  bottom: 8.w,
                 ),
-              );
-            }
-            AppPermission appPermission =
-                permission(widget.cardList[index]['link'].toString());
-            String subtitle =
-                getSubtitle(appPermission, widget.cardList[index]['link'].toString());
-            return Padding(
-              padding: EdgeInsets.only(
-                left: 16.w,
-                right: 16.w,
-                top: index == 0 ? 8.w : 0,
-                bottom: 8.w,
-              ),
-              child: CustomTileSingle(
-                title: widget.cardList[index]['title'],
-                subtitle: subtitle,
-                leadingIcon: widget.cardList[index]['icon'],
-                index: index,
-                isHomeCard: false,
-                isTrailing: true,
-                permission: appPermission,
-                status: widget.cardList[index]['status'].toString(),
-                onTap: () {
-                  context.pushNamed(
-                    widget.cardList[index]['link'],
-                    extra: {
-                      'title': widget.cardList[index]['title'],
-                      'app': widget.data,
-                    },
-                  );
-                },
-              ),
-            );
-          }),
-   
-                  listener: (context, state) async {
-                    if (state is AppFinishWaitingState) {
-                      loadingService.showLoading(context);
-                    } else if (state is AppFinishErrorState) {
-                      loadingService.closeLoading(context);
-                      toastService.error(
-                          message: state.message ?? "Xatolik Bor");
-                      if (kDebugMode)  print(state.message ?? "Xatolik Bor");
-                    } else if (state is AppFinishSuccessState) {
-                      loadingService.closeLoading(context);
-
-                      if (mounted) {
-                        
-                        AppContoller.refreshSingle(context,
-                            id: int.tryParse(widget.data["id"].toString()) ?? 0);
-                        context.replace(
-                          '/application',
-                          extra: {
-                            'app': state.data,
-                          },
-                        );
-                      }
-                      toastService.success(message: "Muvafaqqiyatli Tugatildi");
-
-                    if (kDebugMode)    print("Successfully Post data");
-                    }
+                child: CustomTileSingle(
+                  title: widget.cardList[index]['title'],
+                  subtitle: subtitle,
+                  leadingIcon: widget.cardList[index]['icon'],
+                  index: index,
+                  isHomeCard: false,
+                  isTrailing: true,
+                  permission: appPermission,
+                  status: widget.cardList[index]['status'].toString(),
+                  onTap: () {
+                    context.pushNamed(
+                      widget.cardList[index]['link'],
+                      extra: {
+                        'title': widget.cardList[index]['title'],
+                        'app': widget.data,
+                      },
+                    );
                   },
                 ),
-          );
+              );
+            }),
+        listener: (context, state) async {
+          if (state is AppFinishWaitingState) {
+            loadingService.showLoading(context);
+          } else if (state is AppFinishErrorState) {
+            loadingService.closeLoading(context);
+            toastService.error(message: state.message ?? "Xatolik Bor");
+            if (kDebugMode) print(state.message ?? "Xatolik Bor");
+          } else if (state is AppFinishSuccessState) {
+            loadingService.closeLoading(context);
+
+            if (mounted) {
+              int id = int.tryParse(widget.data["id"].toString()) ?? 0;
+              AppContoller.refreshSingle(context, id: id);
+              context.go(
+                '/application',
+                extra: {
+                  'id': id,
+                },
+              );
+            }
+            toastService.success(message: "Muvafaqqiyatli Tugatildi");
+
+            if (kDebugMode) print("Successfully Post data");
+          }
+        },
+      ),
+    );
   }
 }
 

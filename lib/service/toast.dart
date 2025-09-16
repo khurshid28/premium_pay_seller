@@ -8,7 +8,7 @@ class ToastService {
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
+      timeInSecForIosWeb: 2,
       backgroundColor: AppConstant.primaryColor,
       textColor: Colors.white,
       fontSize: 14.sp,
@@ -21,10 +21,11 @@ class ToastService {
       msg: message,
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
+      timeInSecForIosWeb: 2,
       backgroundColor: AppConstant.redColor,
       textColor: Colors.white,
       fontSize: 14.sp,
+      
     );
   }
 }

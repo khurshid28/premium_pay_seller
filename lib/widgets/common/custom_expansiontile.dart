@@ -132,6 +132,7 @@ class CustomExpansionTile extends StatelessWidget {
                                 onChangedRelation!(data!.toString());
                               }
                             },
+                            
                             suffixIcon: Transform.rotate(
                               angle: -pi / 2,
                               child: CustomIcon(
@@ -150,6 +151,7 @@ class CustomExpansionTile extends StatelessWidget {
                   inputFormatters: fields[i]["masks"] ?? <TextInputFormatter>[],
                   textEditingController: fields[i]["controller"],
                   hintText: fields[i]["title"],
+                  validator: fields[i]["validator"],
                   prefixIcon: fields[i]["prefix"] == null
                       ? null
                       : Column(

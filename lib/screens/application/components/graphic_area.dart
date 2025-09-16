@@ -16,6 +16,8 @@ graphicArea(List graphicAreaList,dynamic app, BuildContext context) {
           child: CustomContainer(
             height: 50.h,
             width: 1.sw,
+              bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
             child: ListTile(
               minTileHeight: 50.h,
               horizontalTitleGap: 10.w,

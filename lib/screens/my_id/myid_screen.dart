@@ -8,6 +8,7 @@ import 'package:premium_pay_seller/bloc/myID/myid_code_state.dart';
 import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/controller/myid_controller.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/service/date/date_validation.dart';
 import 'package:premium_pay_seller/service/formatters/uppercase_formatter.dart';
 import 'package:premium_pay_seller/service/loading.dart';
 import 'package:premium_pay_seller/service/my_id.dart';
@@ -68,11 +69,12 @@ class _MyIdScreenState extends State<MyIdScreen> {
         return Stack(
           children: [
             Padding(
-              padding:  EdgeInsets.only(bottom: 0.2.sh),
+              padding: EdgeInsets.only(bottom: 0.2.sh),
               child: SizedBox(
-                height: 0.8.sh,
-                
-                child: SfPdfViewer.asset('assets/public-oferta.pdf',)),
+                  height: 0.8.sh,
+                  child: SfPdfViewer.asset(
+                    'assets/public-oferta.pdf',
+                  )),
             ),
             Positioned(
                 bottom: 36.0.h,
@@ -126,7 +128,7 @@ class _MyIdScreenState extends State<MyIdScreen> {
 
   myIdScreenBody() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,33 +338,53 @@ class _MyIdScreenState extends State<MyIdScreen> {
                     dateController.text.length == 10 &&
                     isChecked &&
                     selected == "Да") {
-                  final data = await MyIdService().scan(
-                      passport: passportController.text,
-                      birthdate: dateController.text.replaceAll("/", "."));
-                  if (data is MyIdResult?) {
-                    if (kDebugMode) {
-                      for (var i = 0; i < 100; i++) {
-                        print("++++++++++++++++++++++++++++++++++++++++++++");
+                  String? validationRes =
+                      dateFormValidator(dateController.text);
+                  if (validationRes == null) {
+                    final data = await MyIdService().scan(
+                        passport: passportController.text,
+                        birthdate: dateController.text.replaceAll("/", "."));
+                    if (data is MyIdResult?) {
+                      if (kDebugMode) {
+                        for (var i = 0; i < 100; i++) {
+                          print("++++++++++++++++++++++++++++++++++++++++++++");
+                        }
                       }
-                    }
-                    if (kDebugMode) print(data.toString());
+                      if (kDebugMode) print(data.toString());
 
-                    if (data != null && data.code != null) {
-                      if (kDebugMode) print(data.comparison);
-                      if (kDebugMode) print(data.code);
-                      await MyidController.code(context,
-                          code: data.code,
-                          passport: passportController.text.replaceAll(" ", ""),
-                          comparison_value:
-                              double.tryParse(data.comparison.toString()) ?? 0);
-                    } else {
-                      toastService.error(message: "Tanib bo'lmadi");
+                      if (data != null && data.code != null) {
+                        if (kDebugMode) print(data.comparison);
+                        if (kDebugMode) print(data.code);
+                        await MyidController.code(context,
+                            code: data.code,
+                            passport:
+                                passportController.text.replaceAll(" ", ""),
+                            comparison_value:
+                                double.tryParse(data.comparison.toString()) ??
+                                    0);
+                      } else {
+                        toastService.error(message: "Tanib bo'lmadi");
+                      }
+                    } else if (data is PlatformException) {
+                      final parts = data.message.toString().split(' - ');
+                      final errorText =
+                          parts.length > 1 ? parts[1] : data.message;
+                      toastService.error(
+                          message: errorText ?? "Tanib bo'lmadi");
+                    } else if (data is Error) {
+                      toastService.error(
+                          message: data.stackTrace == null
+                              ? "Tanib bo'lmadi"
+                              : data.stackTrace.toString());
+                    } else if (data is PlatformException) {
+                      final parts = data.message.toString().split(' - ');
+                      final errorText =
+                          parts.length > 1 ? parts[1] : data.message;
+                      toastService.error(
+                          message: errorText ?? "Tanib bo'lmadi");
                     }
-                  } else if (data is Error) {
-                    toastService.error(
-                        message: data.stackTrace == null
-                            ? "Tanib bo'lmadi"
-                            : data.stackTrace.toString());
+                  } else {
+                    toastService.error(message: validationRes);
                   }
                 } else if (selected == "Нет") {
                   toastService.error(

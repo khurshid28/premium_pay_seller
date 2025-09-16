@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     if (kDebugMode) {
-      getFcmToken().then(print);
+      getFcmToken();
     }
     return CustomScaffold(
       customAppBar: PreferredSize(

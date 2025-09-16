@@ -7,6 +7,7 @@ import 'package:premium_pay_seller/bloc/app/profile/app_profile_bloc.dart';
 import 'package:premium_pay_seller/bloc/app/profile/app_profile_state.dart';
 import 'package:premium_pay_seller/controller/app_contoller.dart';
 import 'package:premium_pay_seller/export_files.dart';
+import 'package:premium_pay_seller/service/fio/fio_validation.dart';
 import 'package:premium_pay_seller/service/loading.dart';
 import 'package:premium_pay_seller/service/toast.dart';
 import 'package:premium_pay_seller/widgets/common/custom_loading.dart';
@@ -168,6 +169,7 @@ class _Step2ScreenState extends State<Step2Screen> {
             "controller": rNameController,
             "disable": false,
             "keyboardType": TextInputType.name,
+            'validator' : fioValidator
           },
           {
             "title": '90 123 45 67',
@@ -257,14 +259,14 @@ class _Step2ScreenState extends State<Step2Screen> {
                     color: phoneController.text.length == 12 &&
                             phone2Controller.text.length == 12 &&
                             selectedRelation != null &&
-                            rNameController.text.isNotEmpty
+                            rNameController.text.isNotEmpty && fioValidator(rNameController.text)  == null
                         ? AppConstant.primaryColor
                         : AppConstant.greyColor1,
                     onTap: () {
                       if (phoneController.text.length == 12 &&
                           phone2Controller.text.length == 12 &&
                           selectedRelation != null &&
-                          rNameController.text.isNotEmpty) {
+                          rNameController.text.isNotEmpty && fioValidator(rNameController.text)  == null) {
                         AppContoller.addDetail(context,
                             id: int.tryParse(widget.app["id"].toString()) ?? 0,
                             phone: "+998" +

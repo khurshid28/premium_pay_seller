@@ -2,22 +2,22 @@ import 'package:premium_pay_seller/export_files.dart';
 
 // ignore: must_be_immutable
 class CustomTextfield extends StatelessWidget {
-  CustomTextfield({
-    super.key,
-    required this.textEditingController,
-    this.prefixIcon,
-     this.suffixIcon,
-    this.hintText,
-    this.keyboardType,
-    this.maxlines,
-    this.minlines,
-    this.maxLength = 50,
-    this.onChanged,
-    this.onTap,
-    this.inputFormatters = const [],
-    this.textCapitalization,
-    this.readOnly = false
-  });
+  CustomTextfield(
+      {super.key,
+      required this.textEditingController,
+      this.prefixIcon,
+      this.suffixIcon,
+      this.hintText,
+      this.keyboardType,
+      this.maxlines,
+      this.minlines,
+      this.maxLength = 50,
+      this.onChanged,
+      this.onTap,
+      this.inputFormatters = const [],
+      this.textCapitalization,
+      this.readOnly = false,
+      this.validator});
   TextEditingController textEditingController;
   Widget? prefixIcon;
   Widget? suffixIcon;
@@ -25,12 +25,13 @@ class CustomTextfield extends StatelessWidget {
   TextInputType? keyboardType;
   int? maxlines;
   int? minlines;
-  List<TextInputFormatter> inputFormatters =[];
+  List<TextInputFormatter> inputFormatters = [];
   TextCapitalization? textCapitalization;
   void Function(String)? onChanged;
   void Function()? onTap;
   bool readOnly;
-   int? maxLength;
+  int? maxLength;
+  String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -44,15 +45,17 @@ class CustomTextfield extends StatelessWidget {
       cursorColor: AppConstant.primaryColor,
       showCursor: !readOnly,
       readOnly: readOnly,
-       maxLength : maxLength,
-        buildCounter: (
-            BuildContext context, {
-            required int currentLength,
-            required bool isFocused,
-            required int? maxLength,
-          }) {
-            return null; 
-          },
+      autovalidateMode: validator != null ? AutovalidateMode.always : null,
+      validator: validator,
+      maxLength: maxLength,
+      buildCounter: (
+        BuildContext context, {
+        required int currentLength,
+        required bool isFocused,
+        required int? maxLength,
+      }) {
+        return null;
+      },
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,

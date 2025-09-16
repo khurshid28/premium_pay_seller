@@ -197,6 +197,8 @@ class _ApplicationScreenState extends State<ApplicationScreen> {
                
                 ),
                 child: CustomContainer(
+                         bordercolor: AppConstant.primaryColor,
+          borderWidth: 1.2,
                  
                   width: 1.sw,
                   padding: EdgeInsets.symmetric(horizontal: 16.w,vertical: 8.h),

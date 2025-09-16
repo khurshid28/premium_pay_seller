@@ -24,17 +24,21 @@ class GraphicScreen extends StatefulWidget {
 
 class _GraphicScreenState extends State<GraphicScreen> {
   GlobalKey scaffoldKey = GlobalKey<ScaffoldState>();
- bool hasExtra(Map app){
-    return (DateTime.parse(app["createdAt"].toString())..add(const Duration(hours: 5))).day > 14;
+  bool hasExtra(Map app) {
+    return (DateTime.parse(app["createdAt"].toString())
+              ..add(const Duration(hours: 5)))
+            .day >
+        14;
   }
+
   int GetPaymentAmountInMonth() {
     return (num.tryParse((widget.app["payment_amount"] ?? 0).toString()) ??
             0) ~/
-         ((num.tryParse(widget.app["expired_month"].toString()) ?? 12) - (hasExtra(widget.app) ? 1 : 0));
+        ((num.tryParse(widget.app["expired_month"].toString()) ?? 12) -
+            (hasExtra(widget.app) ? 1 : 0));
   }
 
-
-ToastService toastService = ToastService();
+  ToastService toastService = ToastService();
   @override
   Widget build(BuildContext context) {
     // for (var i = 0; i < 30; i++) {
@@ -44,7 +48,7 @@ ToastService toastService = ToastService();
     // }
     List<DateTime> dates = getMonthlyDates(
         DateTime.parse(widget.app["createdAt"].toString()),
-         int.tryParse(
+        int.tryParse(
                 (widget.app?["request"]?["redemptionday"] ?? "").toString()) ??
             1,
         months: int.tryParse(widget.app["expired_month"].toString()) ?? 12);
@@ -59,22 +63,42 @@ ToastService toastService = ToastService();
           isLeading: true,
           isHome: false,
           actions: [
+            IconButton(
+              highlightColor: Colors.transparent,
+              onPressed: () async {
+                toastService.success(message: "Grafik yuklanmoqda ...");
+                await FileService().downloadAndShareFile(
+                    int.tryParse(widget.app["id"].toString()));
+                toastService.success(message: "Grafik yuklandi");
+              },
+              icon: Padding(
+                padding: EdgeInsets.symmetric(vertical: 4.h),
+                child: CustomIcon(
+                  icon: 'assets/icons/share.svg',
+                  color: AppConstant.primaryColor,
+                  width: 24,
+                ),
+              ),
+            ),
             Padding(
-              padding:  EdgeInsets.only(right: 10.w),
+              padding: EdgeInsets.only(right: 8.w),
               child: IconButton(
                 highlightColor: Colors.transparent,
                 onPressed: () async {
-                toastService.success(message: "Grafik yuklanmoqda ...");
-                 await FileService().downloadAndShareFile(
-                      int.tryParse(widget.app["id"].toString()));
+                  toastService.success(message: "Grafik yuklanmoqda ...");
+                  await FileService()
+                      .download(int.tryParse(widget.app["id"].toString()));
                 },
-                icon: CustomIcon(
-                  icon: 'assets/icons/share.svg',
-                  color: AppConstant.primaryColor,
-                  width: 24.w,
+                icon: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 4.h),
+                  child: CustomIcon(
+                    icon: 'assets/icons/download-graph.svg',
+                    color: AppConstant.primaryColor,
+                    width: 24,
+                  ),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -92,6 +116,8 @@ ToastService toastService = ToastService();
             CustomContainer(
               height: 50.h,
               width: 1.sw,
+              bordercolor: AppConstant.primaryColor,
+              borderWidth: 1.2,
               padding: EdgeInsets.symmetric(horizontal: 16.w),
               margin: EdgeInsets.symmetric(vertical: 16.w),
               child: Row(
@@ -142,6 +168,8 @@ ToastService toastService = ToastService();
                 child: CustomContainer(
                   height: 50.h,
                   width: 1.sw,
+                  bordercolor: AppConstant.primaryColor,
+                  borderWidth: 1.2,
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -157,7 +185,8 @@ ToastService toastService = ToastService();
                             weight: FontWeight.w500,
                           ),
                           CustomText(
-                            text: DateFormat('dd/MM/yyyy').formatUtc5(dates[index]),
+                            text: DateFormat('dd/MM/yyyy')
+                                .formatUtc5(dates[index]),
                             color: AppConstant.blackColor,
                             size: 14,
                             weight: FontWeight.w400,
@@ -165,7 +194,9 @@ ToastService toastService = ToastService();
                         ],
                       ),
                       CustomText(
-                        text:index ==0 && hasExtra(widget.app)  ? "${0.toMoney()} сум" :  "${amountInMonth.toMoney()} сум",
+                        text: index == 0 && hasExtra(widget.app)
+                            ? "${0.toMoney()} сум"
+                            : "${amountInMonth.toMoney()} сум",
                         color: AppConstant.blackColor,
                         size: 14,
                         weight: FontWeight.w400,

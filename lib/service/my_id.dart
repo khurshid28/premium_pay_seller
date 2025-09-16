@@ -36,7 +36,10 @@ class MyIdService {
 
     return result; 
   } catch (e) {
-   if (kDebugMode)   print(e); 
+   if (kDebugMode)   {
+    
+    print(e); 
+   }
     return e;
     
   }

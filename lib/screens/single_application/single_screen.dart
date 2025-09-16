@@ -96,7 +96,7 @@ class _SingleScreenState extends State<SingleScreen> {
               "CANCELED_BY_SCORING",
               "CANCELED_BY_DAILY"
             ].contains(stateListen.data["status"])) {
-              context.replace('/application', extra: {
+              context.go('/application', extra: {
                 "id": int.tryParse(stateListen.data["id"].toString()) ?? 0
               });
             }

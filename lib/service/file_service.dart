@@ -38,8 +38,8 @@ class FileService {
       }
 
       // 3️⃣ Temporary papkaga saqlash
-      final dir = await getTemporaryDirectory();
-      final filePath = "${dir.path}/$filename";
+      final dir = await getDownloadsDirectory();
+      final filePath = "${dir?.path}/$filename";
 
       final file = File(filePath);
       final raf = file.openSync(mode: FileMode.write);
@@ -47,7 +47,7 @@ class FileService {
         print(file.path);
       }
      
-      await response.data!.stream.listen(
+      await response.data?.stream.listen(
         (chunk) {
           raf.writeFromSync(chunk);
         },
@@ -60,11 +60,67 @@ class FileService {
         cancelOnError: true,
       ).asFuture();
 
-      // 4️⃣ Faylni ulashish (share)
-      await Share.shareXFiles([XFile(filePath)], text: "Fayl: $filename");
+     
+      await Share.shareXFiles([XFile(filePath)], text: "PremiumPay : $filename");
 
     } catch (e) {
-      print("❌ Xato: $e");
+      print("❌ DownloadAndShareFile: $e");
     }
   }
+ Future<void> download(int? id, ) async {
+    try {
+      final url = "${Endpoints.baseUrl}/app/graph/$id";
+
+       String? token = StorageService().read(StorageService.token);
+
+      // 1️⃣ Faylni yuklab olish
+      final response = await dio.get<ResponseBody>(
+        url,
+        options: Options(
+          responseType: ResponseType.stream,
+          headers: {
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      // 2️⃣ Headerdan filename olish
+      String filename = "downloaded_file";
+      final contentDisposition = response.headers.value("content-disposition");
+      if (contentDisposition != null) {
+        final regExp = RegExp(r'filename="?([^"]+)"?');
+        final match = regExp.firstMatch(contentDisposition);
+        if (match != null) {
+          filename = match.group(1)!;
+        }
+      }
+
+      // 3️⃣ Temporary papkaga saqlash
+      final dir = await getDownloadsDirectory();
+      final filePath = "${dir?.path}/$filename";
+
+      final file = File(filePath);
+      final raf = file.openSync(mode: FileMode.write);
+      if (kDebugMode) {
+        print(file.path);
+      }
+     
+      await response.data?.stream.listen(
+        (chunk) {
+          raf.writeFromSync(chunk);
+        },
+        onDone: () {
+          raf.closeSync();
+        },
+        onError: (e) {
+          throw Exception("Download error: $e");
+        },
+        cancelOnError: true,
+      ).asFuture();
+
+    } catch (e) {
+      print("❌ Downloading Error: $e");
+    }
+  }
+
 }
