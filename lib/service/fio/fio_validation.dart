@@ -15,10 +15,10 @@ bool isValidFio(String input) {
 
 String? fioValidator(String? value) {
   if (value == null || value.trim().isEmpty) {
-    return 'Введите польное фамилия и имя';
+    return 'Введите текст польное фамилия и имя';
   }
   if (!isValidFio(value)) {
-    return 'Введите польное фамилия и имя (Aliyev Ali)';
+    return 'Введите текст польное фамилия и имя (Aliyev Ali)';
   }
   return null;
 }
